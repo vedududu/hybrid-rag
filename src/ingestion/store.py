@@ -1,6 +1,6 @@
 import chromadb
 
-from src.ingestion.embedder import embed_texts
+from src.ingestion.embedder import embed_query, embed_texts
 
 DB_PATH = "chroma_db"
 COLLECTION_NAME = "fastapi_docs"
@@ -36,3 +36,16 @@ def add_chunks(chunks, batch_size=64):
             ],
         )
         print(f"{min(start + batch_size, len(chunks))}/{len(chunks)} stored")
+
+def search(question, k=10):
+    """Find the k chunks closest in meaning to the question."""
+    result = get_collection().query(
+        query_embeddings=[embed_query(question)],
+        n_results=k,
+    )
+    hits = []
+    for text, meta, distance in zip(
+        result["documents"][0], result["metadatas"][0], result["distances"][0]
+    ):
+        hits.append({**meta, "text": text, "distance": distance})
+    return hits
