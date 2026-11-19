@@ -1,3 +1,4 @@
+from src.ingestion.embedder import embed_texts
 import re
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 
@@ -55,3 +56,89 @@ def chunk_by_headings(doc, chunk_size=800, chunk_overlap=100):
             })
     return chunks
 
+def split_sentences(text):
+    """Split text into sentences, keeping each code block whole."""
+    sentences = []
+    for part in re.split(r"(```.*?```)", text, flags=re.DOTALL):
+        if part.startswith("```"):
+            sentences.append(part.strip())
+            continue
+        for line in part.split("\n"):
+            for sentence in re.split(r"(?<=[.!?])\s+", line.strip()):
+                if sentence:
+                    sentences.append(sentence)
+    return sentences
+
+
+def sentence_similarities(sentences, window=1):
+    """How similar each sentence's neighbourhood is to the next one's (higher = same topic)."""
+    windows = [
+        " ".join(sentences[max(0, i - window): i + window + 1])
+        for i in range(len(sentences))
+    ]
+    vectors = embed_texts(windows)
+    return [
+        sum(a * b for a, b in zip(vectors[i], vectors[i + 1]))
+        for i in range(len(vectors) - 1)
+    ]
+
+
+def find_cut_points(similarities, percentile=10):
+    """Return the gap positions to cut at: the lowest `percentile`% of similarities."""
+    if not similarities:
+        return []
+    threshold = sorted(similarities)[len(similarities) * percentile // 100]
+    return [i for i, s in enumerate(similarities) if s < threshold]
+
+
+def group_sentences(sentences, cut_points):
+    """Join sentences into pieces, starting a new piece after each cut point."""
+    pieces = []
+    current = []
+    for i, sentence in enumerate(sentences):
+        current.append(sentence)
+        if i in cut_points:
+            pieces.append("\n".join(current))
+            current = []
+    if current:
+        pieces.append("\n".join(current))
+    return pieces
+
+
+def fix_sizes(pieces, min_size=200, max_size=800, overlap=100):
+    """Cut pieces that are too big, then glue pieces that are too small onto a neighbour."""
+    splitter = RecursiveCharacterTextSplitter(chunk_size=max_size, chunk_overlap=overlap)
+    cut = []
+    for piece in pieces:
+        cut.extend(splitter.split_text(piece))
+
+    glued = []
+    for piece in cut:
+        if glued and len(piece) < min_size:
+            glued[-1] += "\n" + piece
+        else:
+            glued.append(piece)
+    if len(glued) > 1 and len(glued[0]) < min_size:
+        glued[1] = glued[0] + "\n" + glued[1]
+        glued.pop(0)
+    return glued
+
+
+def chunk_semantic(doc, percentile=10, min_size=200, max_size=800, chunk_overlap=100):
+    """Split a document where the topic changes, then fix chunk sizes."""
+    sentences = split_sentences(doc["text"])
+    if not sentences:
+        return []
+    cuts = find_cut_points(sentence_similarities(sentences), percentile)
+    pieces = fix_sizes(group_sentences(sentences, cuts), min_size, max_size, chunk_overlap)
+    chunks = []
+    for i, text in enumerate(pieces):
+        chunks.append({
+            "id": f"{doc['path']}::semantic::{i}",
+            "text": text,
+            "source": doc["source"],
+            "path": doc["path"],
+            "type": doc["type"],
+            "chunk_index": i,
+        })
+    return chunks
