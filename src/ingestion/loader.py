@@ -1,6 +1,39 @@
+import re
 from pathlib import Path
 from bs4 import BeautifulSoup
 from pypdf import PdfReader
+
+
+CODE_ROOT = Path("../fastapi-src")
+INCLUDE_PATTERN = re.compile(r"\{\*\s*(\S+)\s*(.*?)\*\}|\{!\s*(\S+?)\s*!\}")
+LANGUAGES = {".py": "python", ".html": "html"}
+
+
+def pick_lines(lines, spec):
+    """Keep only the lines named in a spec like '6,19:20' (counting from 1, both ends included)."""
+    picked = []
+    for part in spec.split(","):
+        start, _, end = part.partition(":")
+        picked.extend(lines[int(start) - 1:int(end or start)])
+    return picked
+
+
+def expand_includes(text):
+    """Replace FastAPI's code placeholders with the actual code they point to."""
+    def replace(match):
+        relative = match.group(1) or match.group(3)
+        options = match.group(2) or ""
+        path = CODE_ROOT / relative.removeprefix("../../")
+        if not path.exists():
+            return match.group(0)
+        lines = path.read_text(encoding="utf-8-sig").splitlines()
+        line_range = re.search(r"ln\[([^\]]+)\]", options)
+        if line_range:
+            lines = pick_lines(lines, line_range.group(1))
+        language = LANGUAGES.get(path.suffix, "")
+        return f"```{language}\n" + "\n".join(lines) + "\n```"
+    return INCLUDE_PATTERN.sub(replace, text)
+
 
 
 SUPPORTED = {".md", ".txt", ".html", ".pdf"}
@@ -43,6 +76,8 @@ def load_document(path):
         text = read_pdf_file(path)
     else:
         text = read_text_file(path)
+    if suffix == ".md":
+        text = expand_includes(text)
     return {
         "text": text,
         "source": path.name,

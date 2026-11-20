@@ -1,9 +1,10 @@
 import re
+
 from rank_bm25 import BM25Okapi
 
-from src.ingestion.store import get_collection
+from src.ingestion.store import COLLECTION_NAME, get_collection
 
-_index = None
+_indexes = {}
 STOPWORDS = {
     "a", "an", "the", "and", "or", "but", "if", "of", "to", "in", "on", "at", "by",
     "for", "with", "as", "is", "are", "was", "were", "be", "been", "it", "its",
@@ -19,10 +20,9 @@ def tokenize(text):
     return [w for w in re.findall(r"\w+", text.lower()) if w not in STOPWORDS]
 
 
-
-def build_index():
-    """Read every chunk from ChromaDB and build a BM25 keyword index over them."""
-    data = get_collection().get(include=["documents", "metadatas"])
+def build_index(collection_name=COLLECTION_NAME):
+    """Read every chunk from a ChromaDB collection and build a BM25 index over them."""
+    data = get_collection(collection_name).get(include=["documents", "metadatas"])
     tokenized = [tokenize(text) for text in data["documents"]]
     return {
         "bm25": BM25Okapi(tokenized),
@@ -32,17 +32,16 @@ def build_index():
     }
 
 
-def get_index():
-    """Build the index once, then reuse it."""
-    global _index
-    if _index is None:
-        _index = build_index()
-    return _index
+def get_index(collection_name=COLLECTION_NAME):
+    """Build each collection's index once, then reuse it."""
+    if collection_name not in _indexes:
+        _indexes[collection_name] = build_index(collection_name)
+    return _indexes[collection_name]
 
 
-def bm25_search(question, k=10):
+def bm25_search(question, k=10, collection_name=COLLECTION_NAME):
     """Find the k chunks whose words best match the question."""
-    index = get_index()
+    index = get_index(collection_name)
     scores = index["bm25"].get_scores(tokenize(question))
     best = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
     hits = []
