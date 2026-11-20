@@ -37,4 +37,4 @@ def retrieve(question, top_n=5, collection_name=COLLECTION_NAME, dense_weight=0.
         sparse_weight=sparse_weight,
         candidates=candidates,
     )
-    return rerank(question, shortlist, top_n)u
+    return rerank(question, shortlist, top_n)
