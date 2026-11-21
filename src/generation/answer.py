@@ -6,7 +6,7 @@ from src.generation.prompt import NO_ANSWER, SYSTEM_PROMPT, build_prompt, clean_
 from src.ingestion.store import COLLECTION_NAME
 from src.retrieval.reranker import retrieve
 
-GATE = 1.0
+GATE = -7.0
 HIGH = 0.8
 MEDIUM = 0.5
 
