@@ -11,11 +11,6 @@ HIGH = 0.8
 MEDIUM = 0.5
 
 
-def chunk_strength(score):
-    """Squeeze a reranker score into a number between 0 and 1 (a sigmoid)."""
-    return 1 / (1 + math.exp(-score))
-
-
 def confidence_level(confidence):
     """Turn a confidence number into a label."""
     if confidence >= HIGH:
@@ -57,7 +52,8 @@ def ask(question, collection_name=COLLECTION_NAME):
         return refuse(question, "writer: the sources don't contain the answer")
 
     report = judge_answer(answer, chunks)
-    confidence = chunk_strength(best) * report["support_score"]
+    # Confidence = share of claims the judge confirmed (Phase 4 showed the reranker score is a poor guide).
+    confidence = report["support_score"]
     return {"question": question, "answer": answer, "answered": True, "reason": "answered",
             "confidence": round(confidence, 2), "level": confidence_level(confidence),
             "sources": cited_sources(answer, chunks), "checks": report["checks"],
