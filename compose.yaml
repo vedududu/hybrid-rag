@@ -1,0 +1,19 @@
+services:
+  api:
+    build: .
+    image: hybrid-rag-api
+    ports:
+      - "8000:8000"
+    env_file: .env
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    image: hybrid-rag-ui
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      - api
