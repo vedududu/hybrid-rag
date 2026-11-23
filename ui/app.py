@@ -1,10 +1,34 @@
-"""Web page for the Hybrid RAG system. It only displays things – all the real work happens in the API."""
+"""Web page for the Hybrid RAG system.
+
+Two ways to run:
+- API mode (default, local + Docker): the page only displays things and sends questions to the FastAPI service.
+- Direct mode (RAG_DIRECT=1, used on Streamlit Community Cloud): there is no separate API there,
+  so the page runs the same ask() pipeline itself.
+"""
 import os
+import sys
+from datetime import date
+from pathlib import Path
 
 import requests
 import streamlit as st
 
+
+def load_secrets_into_env():
+    """On Streamlit Cloud, settings arrive as st.secrets – copy them into environment variables for the rest of the code."""
+    try:
+        for key, value in st.secrets.items():
+            if isinstance(value, str):
+                os.environ.setdefault(key, value)
+    except Exception:
+        pass  # no secrets file – normal when running locally or in Docker
+
+
+load_secrets_into_env()
+
 API_URL = os.getenv("API_URL", "http://localhost:8000")
+DIRECT_MODE = os.getenv("RAG_DIRECT") == "1"
+DAILY_LIMIT = int(os.getenv("DAILY_LIMIT", "150"))  # protects the free Groq allowance on a public demo
 DOCS_SITE = "https://fastapi.tiangolo.com/"
 
 EXAMPLES = [
@@ -71,6 +95,58 @@ def ask_api(question):
     if not reply.ok:
         return None, f"The API had a problem (status {reply.status_code}). Check the uvicorn terminal for details."
     return reply.json(), None
+
+
+# ---------- direct mode (Streamlit Cloud) ----------
+@st.cache_resource(show_spinner=False)
+def load_pipeline():
+    """Import the RAG pipeline once and keep it in memory for every visitor."""
+    try:  # Streamlit Cloud's Linux has an sqlite3 too old for ChromaDB – swap in a newer copy if installed
+        __import__("pysqlite3")
+        sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+    except ImportError:
+        pass
+    project_root = str(Path(__file__).resolve().parent.parent)
+    if project_root not in sys.path:
+        sys.path.insert(0, project_root)
+    from src.generation.answer import ask
+    return ask
+
+
+def ask_direct(question):
+    """Run ask() inside this app. Returns (result, error_message) – one of them is None."""
+    if not 3 <= len(question) <= 500:
+        return None, "Please type a real question (between 3 and 500 characters)."
+    try:
+        return load_pipeline()(question), None
+    except Exception as error:
+        if type(error).__name__ == "RateLimitError":
+            return None, "The free AI service is busy right now (rate limit). Please wait a minute and try again."
+        return None, f"Something went wrong while answering ({type(error).__name__}). Please try again."
+
+
+# ---------- daily limit ----------
+@st.cache_resource
+def usage_counter():
+    """One counter shared by every visitor of this running app."""
+    return {"day": None, "count": 0}
+
+
+def within_daily_limit():
+    counter = usage_counter()
+    today = date.today().isoformat()
+    if counter["day"] != today:
+        counter.update(day=today, count=0)
+    if counter["count"] >= DAILY_LIMIT:
+        return False
+    counter["count"] += 1
+    return True
+
+
+def get_answer(question):
+    if not within_daily_limit():
+        return None, f"This demo has reached its limit of {DAILY_LIMIT} questions for today. Please come back tomorrow!"
+    return ask_direct(question) if DIRECT_MODE else ask_api(question)
 
 
 # ---------- small display helpers ----------
@@ -142,7 +218,9 @@ with st.sidebar:
     c2.metric("Honest refusals", "10 / 10")
     st.caption("Faithfulness 84% – share of claims backed by the sources.")
     st.divider()
-    if api_is_up():
+    if DIRECT_MODE:
+        st.info("Running the pipeline inside this app (cloud demo mode).", icon="☁️")
+    elif api_is_up():
         st.success(f"API online · {API_URL}", icon="🟢")
     else:
         st.error(f"API offline · {API_URL}", icon="🔴")
@@ -172,8 +250,11 @@ with st.form("ask_form", clear_on_submit=False):
     submitted = st.form_submit_button("Ask", type="primary", width="stretch")
 
 if submitted or st.session_state.pop("ask_now", False):
-    with st.spinner("Searching the docs, writing an answer and fact-checking it…"):
-        result, error = ask_api(st.session_state["question"].strip())
+    waiting = "Searching the docs, writing an answer and fact-checking it…"
+    if DIRECT_MODE and "result" not in st.session_state:
+        waiting += " The first question after the app wakes up takes 1–2 minutes while the AI models load."
+    with st.spinner(waiting):
+        result, error = get_answer(st.session_state["question"].strip())
     if error:
         st.session_state.pop("result", None)
         st.error(error, icon="🚫")
