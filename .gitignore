@@ -5,3 +5,4 @@ __pycache__/
 desktop.ini
 data/raw/
 *.pdf
+data/feedback/

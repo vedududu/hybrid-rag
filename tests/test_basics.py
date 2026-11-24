@@ -4,6 +4,7 @@ import json
 from fastapi.testclient import TestClient
 
 import src.api.main as api
+import src.feedback as feedback
 import src.generation.answer as answer
 import src.generation.cache as cache
 from src.api.main import app
@@ -18,6 +19,7 @@ client = TestClient(app)
 
 def test_clean_citations_turns_odd_brackets_into_normal_ones():
     assert clean_citations("Use status_code 【2】【3】.") == "Use status_code [2][3]."
+    assert clean_citations("See 【3†L1-L9】【4†L1-L7】.") == "See [3][4]."
 
 
 def test_find_citations_ignores_numbers_inside_code():
@@ -82,3 +84,20 @@ def test_stream_route_sends_one_json_update_per_line(monkeypatch):
     reply = client.post("/ask/stream", json={"question": "How do I add CORS?"})
     lines = [line for line in reply.text.splitlines() if line]
     assert [json.loads(line)["type"] for line in lines] == ["stage", "done"]
+
+
+
+def test_feedback_is_saved_to_a_file_when_supabase_is_not_set_up(monkeypatch, tmp_path):
+    monkeypatch.delenv("SUPABASE_URL", raising=False)
+    monkeypatch.setattr(feedback, "FEEDBACK_FILE", tmp_path / "feedback.jsonl")
+    assert feedback.save_feedback("How do I add CORS?", "Use CORSMiddleware [1].", "up", "high", 1.0) == "file"
+    row = json.loads((tmp_path / "feedback.jsonl").read_text(encoding="utf-8"))
+    assert (row["vote"], row["level"]) == ("up", "high")
+
+
+def test_feedback_route_accepts_only_up_or_down(monkeypatch):
+    monkeypatch.setattr(api, "save_feedback", lambda **row: "file")
+    good = client.post("/feedback", json={"question": "How do I add CORS?", "answer": "x", "vote": "down"})
+    bad = client.post("/feedback", json={"question": "How do I add CORS?", "answer": "x", "vote": "meh"})
+    assert good.json() == {"saved": True, "stored_in": "file"}
+    assert bad.status_code == 422

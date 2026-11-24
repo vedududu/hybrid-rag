@@ -27,4 +27,4 @@ def build_prompt(question, chunks):
 
 def clean_citations(answer):
     """Turn citations written as 【2】 into the normal [2] style."""
-    return re.sub(r"【(\d+)】", r"[\1]", answer)
+    return re.sub(r"【(\d+)(?:†[^】]*)?】", r"[\1]", answer)

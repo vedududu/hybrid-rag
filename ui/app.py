@@ -6,6 +6,7 @@ Two ways to run:
 - Direct mode (RAG_DIRECT=1, used on Streamlit Community Cloud): there is no separate API there,
   so the page runs the same ask() pipeline itself.
 """
+import hashlib
 import json
 import os
 import re
@@ -160,7 +161,7 @@ def answer_with_live_progress(question):
             elif update["type"] == "text":
                 thinking_box.empty()
                 written += update["text"]
-                text.markdown(re.sub(r"【(\d+)】", r"[\1]", written) + " ▌")
+                text.markdown(re.sub(r"【(\d+)(?:†[^】]*)?】", r"[\1]", written) + " ▌")
                 time.sleep(TYPING_PAUSE)
             elif update["type"] == "done":
                 clear_progress()
@@ -170,6 +171,45 @@ def answer_with_live_progress(question):
         return None, explain_error(error)
     clear_progress()
     return None, "The answer stopped unexpectedly. Please try again."
+
+
+# ---------- feedback ----------
+def send_feedback(result, vote, comment):
+    """Store a vote: through the API, or directly when running on Streamlit Cloud. Returns True if saved."""
+    row = {"question": result["question"], "answer": result["answer"], "vote": vote,
+           "level": result["level"], "confidence": result["confidence"], "comment": comment or None}
+    try:
+        if DIRECT_MODE:
+            load_pipeline()  # makes the project's src folder importable
+            from src.feedback import save_feedback
+            save_feedback(**row)
+        else:
+            requests.post(f"{API_URL}/feedback", json=row, timeout=15).raise_for_status()
+        return True
+    except Exception:
+        return False
+
+
+def feedback_section(result):
+    """Thumbs up/down under an answer, plus an optional comment after a thumbs down."""
+    key = "feedback_" + hashlib.md5((result["question"] + result["answer"]).encode("utf-8")).hexdigest()[:12]
+    if st.session_state.get(key + "_saved"):
+        st.caption("Thanks for your feedback! 🙏")
+        return
+    st.caption("Was this answer helpful?")
+    vote = st.feedback("thumbs", key=key)
+    if vote is None:
+        return
+    comment = ""
+    if vote == 0:
+        comment = st.text_input("What was wrong or missing? (optional)", key=key + "_comment", max_chars=1000)
+        if not st.button("Send feedback", key=key + "_send"):
+            return
+    if send_feedback(result, "up" if vote == 1 else "down", comment):
+        st.session_state[key + "_saved"] = True
+        st.caption("Thanks for your feedback! 🙏")
+    else:
+        st.caption("Sorry – your feedback couldn't be saved right now.")
 
 
 # ---------- daily limit ----------
@@ -243,9 +283,11 @@ def show_result(result):
     confirmed = sum(c["supported"] for c in checks)
     with st.expander(f"🔍 Fact-check: {confirmed} of {len(checks)} claims confirmed"):
         for c in checks:
-            icon = "✅" if c["supported"] else "❌"
+            icon = "✅" if c.get("supported") else "❌"
             cited = ", ".join(f"[{n}]" for n in c["citations"]) or "no citation"
             st.markdown(f"{icon} {c['claim']}  \n<small>cited: {cited}</small>", unsafe_allow_html=True)
+
+    feedback_section(result)
 
 
 # ---------- sidebar ----------
