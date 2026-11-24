@@ -100,6 +100,7 @@ def main(questions_file=QUESTIONS_FILE, results_file=None):
             "verdict": verdict["verdict"],
             "score": verdict["score"],
             "grader_reason": verdict["reason"],
+            "stats": result.get("stats"),
         }
         save(list(done.values()), results_file)  # CHANGED
         print(f"{item['id']}  {verdict['verdict']:10} level {result['level']:6} ({time.time() - start:.0f}s)")

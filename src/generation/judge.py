@@ -1,6 +1,8 @@
 import json
 import re
 
+from rich import prompt
+
 from src.generation.llm import ask_llm
 from src.generation.prompt import format_sources
 
@@ -41,11 +43,11 @@ def parse_checks(reply):
     return checks if isinstance(checks, list) else []
 
 
-def judge_answer(answer, chunks):
+def judge_answer(answer, chunks, usage_log=None):
     """Check an answer's citations: real numbers (code) and real support (AI judge)."""
     bad = bad_citations(answer, len(chunks))
     prompt = f"Sources:\n\n{format_sources(chunks)}\n\nAnswer to check:\n{answer}"
-    checks = parse_checks(ask_llm(prompt, system=JUDGE_PROMPT))
+    checks = parse_checks(ask_llm(prompt, system=JUDGE_PROMPT, usage_log=usage_log))
     supported = sum(1 for check in checks if check.get("supported") is True)
     score = supported / len(checks) if checks else 0.0
     return {"checks": checks, "bad_citations": bad, "support_score": score}

@@ -27,7 +27,7 @@ def get_client():
     return _client
 
 
-def ask_llm(prompt, system=None, temperature=0):
+def ask_llm(prompt, system=None, temperature=0, usage_log=None):
     """Send a prompt to the LLM and return its reply as text."""
     messages = []
     if system:
@@ -38,4 +38,6 @@ def ask_llm(prompt, system=None, temperature=0):
         messages=messages,
         temperature=temperature,
     )
+    if usage_log is not None:
+        usage_log.append({"in": response.usage.prompt_tokens, "out": response.usage.completion_tokens})
     return response.choices[0].message.content

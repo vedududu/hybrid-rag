@@ -175,6 +175,9 @@ def show_result(result):
     show_badge(result)
     if result.get("cached"):
         st.caption("⚡ Answered from cache – this question was asked recently, so no AI call was needed.")
+    elif result.get("stats"):
+        stats = result["stats"]
+        st.caption(f"⏱ {stats['total_seconds']:.1f} s · {stats['total_tokens']:,} AI tokens")
     st.write("")
 
     if not result["answered"]:
