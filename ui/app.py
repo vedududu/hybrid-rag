@@ -1,12 +1,16 @@
 """Web page for the Hybrid RAG system.
 
 Two ways to run:
-- API mode (default, local + Docker): the page only displays things and sends questions to the FastAPI service.
+- API mode (default, local + Docker): the page only displays things; it sends questions to the FastAPI service
+  and shows its progress updates live (POST /ask/stream).
 - Direct mode (RAG_DIRECT=1, used on Streamlit Community Cloud): there is no separate API there,
   so the page runs the same ask() pipeline itself.
 """
+import json
 import os
+import re
 import sys
+import time
 from datetime import date
 from pathlib import Path
 
@@ -30,6 +34,9 @@ API_URL = os.getenv("API_URL", "http://localhost:8000")
 DIRECT_MODE = os.getenv("RAG_DIRECT") == "1"
 DAILY_LIMIT = int(os.getenv("DAILY_LIMIT", "150"))  # protects the free Groq allowance on a public demo
 DOCS_SITE = "https://fastapi.tiangolo.com/"
+THINKING_SHOWN = 400   # how many characters of the AI's live thinking to show at once
+THINKING_PAUSE = 0.012  # seconds between thinking pieces (Groq sends them almost instantly; this is only for show)
+TYPING_PAUSE = 0.025    # seconds between answer pieces, so the answer is typed out instead of flashing in
 
 EXAMPLES = [
     "How do I return a 201 status for a create endpoint?",
@@ -82,19 +89,13 @@ def api_is_up():
         return False
 
 
-def ask_api(question):
-    """Send the question to POST /ask. Returns (result, error_message) – one of them is None."""
-    try:
-        reply = requests.post(f"{API_URL}/ask", json={"question": question}, timeout=180)
-    except requests.ConnectionError:
-        return None, f"Can't reach the API at {API_URL}. Is uvicorn running?"
-    except requests.Timeout:
-        return None, "The API took too long to answer. The first question after start-up is slow – try again."
-    if reply.status_code == 422:
-        return None, "Please type a real question (between 3 and 500 characters)."
-    if not reply.ok:
-        return None, f"The API had a problem (status {reply.status_code}). Check the uvicorn terminal for details."
-    return reply.json(), None
+def updates_from_api(question):
+    """Ask POST /ask/stream and hand out each progress update as it arrives (one JSON object per line)."""
+    with requests.post(f"{API_URL}/ask/stream", json={"question": question}, stream=True, timeout=180) as reply:
+        reply.raise_for_status()
+        for line in reply.iter_lines():
+            if line:
+                yield json.loads(line)
 
 
 # ---------- direct mode (Streamlit Cloud) ----------
@@ -109,20 +110,66 @@ def load_pipeline():
     project_root = str(Path(__file__).resolve().parent.parent)
     if project_root not in sys.path:
         sys.path.insert(0, project_root)
-    from src.generation.cache import cached_ask
-    return cached_ask
+    from src.generation.cache import cached_ask_stream
+    return cached_ask_stream
 
 
-def ask_direct(question):
-    """Run ask() inside this app. Returns (result, error_message) – one of them is None."""
+def get_updates(question):
+    """Progress updates for one question, from the pipeline inside this app or from the API."""
+    if DIRECT_MODE:
+        return load_pipeline()(question)
+    return updates_from_api(question)
+
+
+def explain_error(error):
+    """Turn whatever went wrong into a short, friendly message."""
+    if isinstance(error, requests.ConnectionError) and not isinstance(error, requests.exceptions.ChunkedEncodingError):
+        return f"Can't reach the API at {API_URL}. Is uvicorn running?"
+    if isinstance(error, requests.Timeout):
+        return "The answer took too long. The first question after start-up is slow – please try again."
+    if isinstance(error, requests.HTTPError) and error.response is not None and error.response.status_code == 422:
+        return "Please type a real question (between 3 and 500 characters)."
+    if type(error).__name__ == "RateLimitError":
+        return "The free AI service is busy right now (rate limit). Please wait a minute and try again."
+    return f"Something went wrong while answering ({type(error).__name__}). Please try again."
+
+
+def answer_with_live_progress(question):
+    """Show each stage and the answer text as they arrive. Returns (result, error_message)."""
     if not 3 <= len(question) <= 500:
         return None, "Please type a real question (between 3 and 500 characters)."
+    stage, thinking_box, text = st.empty(), st.empty(), st.empty()
+    first_time = DIRECT_MODE and "result" not in st.session_state
+    stage.info("Starting…" + (" The first question after the app wakes up takes 1–2 minutes while the AI "
+                              "models load." if first_time else ""), icon="⏳")
+    thought, written = "", ""
+
+    def clear_progress():
+        stage.empty()
+        thinking_box.empty()
+        text.empty()
+
     try:
-        return load_pipeline()(question), None
+        for update in get_updates(question):
+            if update["type"] == "stage":
+                stage.info(update["text"], icon="⏳")
+            elif update["type"] == "thinking":
+                thought += update["text"]
+                thinking_box.caption("💭 " + ("…" + thought[-THINKING_SHOWN:] if len(thought) > THINKING_SHOWN else thought))
+                time.sleep(THINKING_PAUSE)
+            elif update["type"] == "text":
+                thinking_box.empty()
+                written += update["text"]
+                text.markdown(re.sub(r"【(\d+)】", r"[\1]", written) + " ▌")
+                time.sleep(TYPING_PAUSE)
+            elif update["type"] == "done":
+                clear_progress()
+                return update["result"], None
     except Exception as error:
-        if type(error).__name__ == "RateLimitError":
-            return None, "The free AI service is busy right now (rate limit). Please wait a minute and try again."
-        return None, f"Something went wrong while answering ({type(error).__name__}). Please try again."
+        clear_progress()
+        return None, explain_error(error)
+    clear_progress()
+    return None, "The answer stopped unexpectedly. Please try again."
 
 
 # ---------- daily limit ----------
@@ -141,12 +188,6 @@ def within_daily_limit():
         return False
     counter["count"] += 1
     return True
-
-
-def get_answer(question):
-    if not within_daily_limit():
-        return None, f"This demo has reached its limit of {DAILY_LIMIT} questions for today. Please come back tomorrow!"
-    return ask_direct(question) if DIRECT_MODE else ask_api(question)
 
 
 # ---------- small display helpers ----------
@@ -255,11 +296,10 @@ with st.form("ask_form", clear_on_submit=False):
     submitted = st.form_submit_button("Ask", type="primary", width="stretch")
 
 if submitted or st.session_state.pop("ask_now", False):
-    waiting = "Searching the docs, writing an answer and fact-checking it…"
-    if DIRECT_MODE and "result" not in st.session_state:
-        waiting += " The first question after the app wakes up takes 1–2 minutes while the AI models load."
-    with st.spinner(waiting):
-        result, error = get_answer(st.session_state["question"].strip())
+    if within_daily_limit():
+        result, error = answer_with_live_progress(st.session_state["question"].strip())
+    else:
+        result, error = None, f"This demo has reached its limit of {DAILY_LIMIT} questions for today. Please come back tomorrow!"
     if error:
         st.session_state.pop("result", None)
         st.error(error, icon="🚫")

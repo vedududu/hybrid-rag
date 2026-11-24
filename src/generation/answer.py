@@ -2,7 +2,7 @@ import math
 import time
 
 from src.generation.judge import find_citations, judge_answer
-from src.generation.llm import ask_llm
+from src.generation.llm import ask_llm, stream_llm
 from src.generation.prompt import NO_ANSWER, SYSTEM_PROMPT, build_prompt, clean_citations
 from src.ingestion.store import COLLECTION_NAME
 from src.retrieval.reranker import retrieve
@@ -59,20 +59,33 @@ def add_stats(result, stats, usage):
     return {**result, "stats": stats}
 
 
-def ask(question, collection_name=COLLECTION_NAME):
-    """Answer a question from the docs: retrieve, gate, write, judge, score – and measure time and tokens."""
+def ask_stream(question, collection_name=COLLECTION_NAME):
+    """Answer a question step by step, handing out progress updates; the last update holds the full result."""
     stats, usage = {"seconds": {}}, []
+    yield {"type": "stage", "text": "Searching the docs…"}
     chunks = timed(stats, "search", lambda: retrieve(question, collection_name=collection_name))
     best = chunks[0]["rerank_score"] if chunks else -math.inf
     if best < GATE:
-        return add_stats(refuse(question, "gate: no chunk was relevant enough"), stats, usage)
+        yield {"type": "done", "result": add_stats(refuse(question, "gate: no chunk was relevant enough"), stats, usage)}
+        return
     chunks = add_next_chunks(chunks, collection_name)
+    yield {"type": "stage", "text": f"Found {len(chunks)} relevant passages in {stats['seconds']['search']} s. "
+                                    "The AI is reading them and thinking…"}
 
-    prompt = build_prompt(question, chunks)
-    answer = timed(stats, "writer", lambda: clean_citations(ask_llm(prompt, system=SYSTEM_PROMPT, usage_log=usage)))
+    started = time.perf_counter()
+    pieces = []
+    for update in stream_llm(build_prompt(question, chunks), system=SYSTEM_PROMPT, usage_log=usage):
+        if update["type"] == "text":
+            pieces.append(update["text"])
+        yield update
+    stats["seconds"]["writer"] = round(time.perf_counter() - started, 2)
+    answer = clean_citations("".join(pieces))
     if is_no_answer(answer):
-        return add_stats(refuse(question, "writer: the sources don't contain the answer"), stats, usage)
+        result = refuse(question, "writer: the sources don't contain the answer")
+        yield {"type": "done", "result": add_stats(result, stats, usage)}
+        return
 
+    yield {"type": "stage", "text": "Fact-checking every claim against the sources…"}
     report = timed(stats, "judge", lambda: judge_answer(answer, chunks, usage_log=usage))
     # Confidence = share of claims the judge confirmed (Phase 4 showed the reranker score is a poor guide).
     confidence = report["support_score"]
@@ -80,4 +93,11 @@ def ask(question, collection_name=COLLECTION_NAME):
               "confidence": round(confidence, 2), "level": confidence_level(confidence),
               "sources": cited_sources(answer, chunks), "checks": report["checks"],
               "bad_citations": report["bad_citations"]}
-    return add_stats(result, stats, usage)
+    yield {"type": "done", "result": add_stats(result, stats, usage)}
+
+
+def ask(question, collection_name=COLLECTION_NAME):
+    """Answer a question in one go: run ask_stream and keep only its final result."""
+    for update in ask_stream(question, collection_name):
+        if update["type"] == "done":
+            return update["result"]

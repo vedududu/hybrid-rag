@@ -1,6 +1,9 @@
 """Fast checks of our own logic. No Groq calls and no AI models are loaded, so they run in seconds."""
+import json
+
 from fastapi.testclient import TestClient
 
+import src.api.main as api
 import src.generation.answer as answer
 import src.generation.cache as cache
 from src.api.main import app
@@ -43,7 +46,12 @@ def test_evidence_must_be_in_a_chunk_from_the_right_file():
 
 def test_cache_answers_a_repeated_question_without_running_the_pipeline(monkeypatch):
     calls = []
-    monkeypatch.setattr(cache, "ask", lambda q: calls.append(q) or {"question": q, "answer": "x"})
+
+    def fake_pipeline(question):
+        calls.append(question)
+        yield {"type": "done", "result": {"question": question, "answer": "x"}}
+
+    monkeypatch.setattr(cache, "ask_stream", fake_pipeline)
     monkeypatch.setattr(cache, "_cache", {})
     first = cache.cached_ask("How do I add CORS?")
     second = cache.cached_ask("  how do i add CORS  ")
@@ -63,3 +71,14 @@ def test_api_health_and_input_validation():
     assert client.get("/health").json() == {"status": "ok"}
     assert client.post("/ask", json={"question": "hi"}).status_code == 422
     assert client.post("/ask", json={"question": "   "}).status_code == 422
+
+
+def test_stream_route_sends_one_json_update_per_line(monkeypatch):
+    def fake_stream(question):
+        yield {"type": "stage", "text": "Searching the docs…"}
+        yield {"type": "done", "result": {"answer": "x"}}
+
+    monkeypatch.setattr(api, "cached_ask_stream", fake_stream)
+    reply = client.post("/ask/stream", json={"question": "How do I add CORS?"})
+    lines = [line for line in reply.text.splitlines() if line]
+    assert [json.loads(line)["type"] for line in lines] == ["stage", "done"]

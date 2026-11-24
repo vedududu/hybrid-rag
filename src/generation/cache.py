@@ -1,8 +1,7 @@
 import re
 import time
 
-from src.generation.answer import ask
-
+from src.generation.answer import ask_stream
 MAX_ENTRIES = 500
 MAX_AGE_SECONDS = 24 * 60 * 60
 
@@ -15,14 +14,24 @@ def cache_key(question):
     return text.rstrip("?.! ")
 
 
-def cached_ask(question):
-    """Return a saved answer if this question was answered recently; otherwise run ask() and save the result."""
+def cached_ask_stream(question):
+    """Like ask_stream, but a question answered recently is replied to straight from the cache."""
     key = cache_key(question)
     entry = _cache.get(key)
     if entry and time.time() - entry["saved_at"] < MAX_AGE_SECONDS:
-        return {**entry["result"], "question": question, "cached": True}
-    result = ask(question)
-    if len(_cache) >= MAX_ENTRIES:
-        _cache.pop(next(iter(_cache)))
-    _cache[key] = {"saved_at": time.time(), "result": result}
-    return {**result, "cached": False}
+        yield {"type": "done", "result": {**entry["result"], "question": question, "cached": True}}
+        return
+    for update in ask_stream(question):
+        if update["type"] == "done":
+            if len(_cache) >= MAX_ENTRIES:
+                _cache.pop(next(iter(_cache)))
+            _cache[key] = {"saved_at": time.time(), "result": update["result"]}
+            update = {"type": "done", "result": {**update["result"], "cached": False}}
+        yield update
+
+
+def cached_ask(question):
+    """Return a saved answer if this question was answered recently; otherwise answer it and save the result."""
+    for update in cached_ask_stream(question):
+        if update["type"] == "done":
+            return update["result"]

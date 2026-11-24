@@ -41,3 +41,29 @@ def ask_llm(prompt, system=None, temperature=0, usage_log=None):
     if usage_log is not None:
         usage_log.append({"in": response.usage.prompt_tokens, "out": response.usage.completion_tokens})
     return response.choices[0].message.content
+
+
+
+def stream_llm(prompt, system=None, temperature=0, usage_log=None):
+    """Like ask_llm, but hands out the reply piece by piece: the AI's thinking first, then its answer text."""
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    stream = get_client().chat.completions.create(
+        model=PROVIDERS[PROVIDER]["model"],
+        messages=messages,
+        temperature=temperature,
+        stream=True,
+        stream_options={"include_usage": True},
+    )
+    for chunk in stream:
+        if chunk.choices:
+            delta = chunk.choices[0].delta
+            thinking = getattr(delta, "reasoning", None)
+            if thinking:
+                yield {"type": "thinking", "text": thinking}
+            if delta.content:
+                yield {"type": "text", "text": delta.content}
+        if chunk.usage and usage_log is not None:
+            usage_log.append({"in": chunk.usage.prompt_tokens, "out": chunk.usage.completion_tokens})
