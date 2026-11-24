@@ -1,0 +1,4622 @@
+{
+  "fastapi_docs": {
+    "summary": {
+      "hit_rate": 0.95,
+      "mrr": 0.8379166666666666,
+      "chunk_hit_rate": 0.7625,
+      "chunk_mrr": 0.5372916666666667,
+      "gate_passed_answerable": 1.0,
+      "gate_blocked_unanswerable": 0.5,
+      "missed": [
+        "t002",
+        "t020",
+        "t031",
+        "t063"
+      ],
+      "chunk_missed": [
+        "t002",
+        "t003",
+        "t006",
+        "t010",
+        "t011",
+        "t014",
+        "t019",
+        "t020",
+        "t026",
+        "t027",
+        "t029",
+        "t031",
+        "t033",
+        "t052",
+        "t063",
+        "t064",
+        "t070",
+        "t071",
+        "t078"
+      ]
+    },
+    "questions": [
+      {
+        "id": "t001",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": -1.63,
+        "passes_gate": true,
+        "found": [
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t002",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.63,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "tutorial/header-param-models.md",
+          "tutorial/request-form-models.md",
+          "tutorial/security/simple-oauth2.md",
+          "tutorial/sql-databases.md"
+        ]
+      },
+      {
+        "id": "t003",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 4.06,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-nested-models.md",
+          "tutorial/body.md",
+          "tutorial/body-nested-models.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/body.md"
+        ]
+      },
+      {
+        "id": "t004",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.15,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-fields.md",
+          "release-notes.md",
+          "how-to/separate-openapi-schemas.md",
+          "tutorial/body-fields.md",
+          "tutorial/body-fields.md"
+        ]
+      },
+      {
+        "id": "t005",
+        "answerable": true,
+        "hit_position": 5,
+        "evidence_position": 5,
+        "best_score": 0.66,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "tutorial/response-model.md",
+          "tutorial/response-model.md",
+          "how-to/conditional-openapi.md",
+          "tutorial/extra-models.md"
+        ]
+      },
+      {
+        "id": "t006",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.23,
+        "passes_gate": true,
+        "found": [
+          "tutorial/extra-data-types.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/extra-data-types.md",
+          "tutorial/request-files.md",
+          "tutorial/body-multiple-params.md"
+        ]
+      },
+      {
+        "id": "t007",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": -0.05,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t008",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.32,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-param-models.md",
+          "release-notes.md",
+          "tutorial/query-param-models.md",
+          "tutorial/query-param-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t009",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.87,
+        "passes_gate": true,
+        "found": [
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/body-fields.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/path-params-numeric-validations.md"
+        ]
+      },
+      {
+        "id": "t010",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 7.17,
+        "passes_gate": true,
+        "found": [
+          "tutorial/cookie-param-models.md",
+          "release-notes.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/query-param-models.md",
+          "tutorial/body-fields.md"
+        ]
+      },
+      {
+        "id": "t011",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 6.59,
+        "passes_gate": true,
+        "found": [
+          "tutorial/header-params.md",
+          "tutorial/header-param-models.md",
+          "release-notes.md",
+          "tutorial/header-params.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t012",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 4.22,
+        "passes_gate": true,
+        "found": [
+          "tutorial/header-param-models.md",
+          "tutorial/header-param-models.md",
+          "tutorial/request-form-models.md",
+          "tutorial/query-param-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t013",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.29,
+        "passes_gate": true,
+        "found": [
+          "tutorial/path-operation-configuration.md",
+          "tutorial/query-params-str-validations.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t014",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 5.15,
+        "passes_gate": true,
+        "found": [
+          "tutorial/schema-extra-example.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "tutorial/body.md",
+          "tutorial/body-fields.md"
+        ]
+      },
+      {
+        "id": "t015",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.09,
+        "passes_gate": true,
+        "found": [
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md",
+          "tutorial/frontend.md",
+          "advanced/templates.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t016",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 4,
+        "best_score": 2.91,
+        "passes_gate": true,
+        "found": [
+          "reference/sse.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md"
+        ]
+      },
+      {
+        "id": "t017",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.95,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "tutorial/dependencies/dependencies-with-yield.md"
+        ]
+      },
+      {
+        "id": "t018",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": -0.05,
+        "passes_gate": true,
+        "found": [
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-files.md",
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-form-models.md"
+        ]
+      },
+      {
+        "id": "t019",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 5.63,
+        "passes_gate": true,
+        "found": [
+          "advanced/advanced-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "reference/response.md",
+          "advanced/security/oauth2-scopes.md"
+        ]
+      },
+      {
+        "id": "t020",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.01,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t021",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.5,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "release-notes.md",
+          "tutorial/dependencies/dependencies-with-yield.md"
+        ]
+      },
+      {
+        "id": "t022",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 0.5,
+        "passes_gate": true,
+        "found": [
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md"
+        ]
+      },
+      {
+        "id": "t023",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 4.33,
+        "passes_gate": true,
+        "found": [
+          "tutorial/bigger-applications.md",
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md",
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t024",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.13,
+        "passes_gate": true,
+        "found": [
+          "tutorial/encoder.md",
+          "release-notes.md",
+          "advanced/response-directly.md",
+          "tutorial/encoder.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t025",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.14,
+        "passes_gate": true,
+        "found": [
+          "reference/security/index.md",
+          "advanced/security/oauth2-scopes.md",
+          "advanced/security/oauth2-scopes.md",
+          "release-notes.md",
+          "reference/dependencies.md"
+        ]
+      },
+      {
+        "id": "t026",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 1.21,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-multiple-params.md",
+          "tutorial/testing.md",
+          "tutorial/body-multiple-params.md",
+          "advanced/openapi-callbacks.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t027",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 8.18,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/request-form-models.md",
+          "tutorial/header-param-models.md",
+          "tutorial/query-param-models.md"
+        ]
+      },
+      {
+        "id": "t028",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 6.16,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-responses.md",
+          "advanced/additional-responses.md",
+          "advanced/response-directly.md",
+          "advanced/additional-responses.md",
+          "tutorial/response-model.md"
+        ]
+      },
+      {
+        "id": "t029",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 6.47,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-status-codes.md",
+          "advanced/response-change-status-code.md",
+          "advanced/response-headers.md",
+          "advanced/response-cookies.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t030",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 4.5,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/index.md",
+          "tutorial/dependencies/sub-dependencies.md"
+        ]
+      },
+      {
+        "id": "t031",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.44,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "tutorial/request-form-models.md",
+          "tutorial/query-params-str-validations.md",
+          "python-types.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t032",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.26,
+        "passes_gate": true,
+        "found": [
+          "advanced/dataclasses.md",
+          "tutorial/response-model.md",
+          "advanced/dataclasses.md",
+          "tutorial/body-nested-models.md",
+          "benchmarks.md"
+        ]
+      },
+      {
+        "id": "t033",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 1.98,
+        "passes_gate": true,
+        "found": [
+          "advanced/events.md",
+          "advanced/events.md",
+          "advanced/events.md",
+          "advanced/testing-events.md",
+          "advanced/testing-events.md"
+        ]
+      },
+      {
+        "id": "t034",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 5,
+        "best_score": 3.27,
+        "passes_gate": true,
+        "found": [
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md"
+        ]
+      },
+      {
+        "id": "t035",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.59,
+        "passes_gate": true,
+        "found": [
+          "advanced/openapi-webhooks.md",
+          "advanced/custom-response.md",
+          "advanced/openapi-webhooks.md",
+          "advanced/openapi-webhooks.md",
+          "advanced/openapi-callbacks.md"
+        ]
+      },
+      {
+        "id": "t036",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 3.55,
+        "passes_gate": true,
+        "found": [
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md"
+        ]
+      },
+      {
+        "id": "t037",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 3,
+        "best_score": 1.54,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-directly.md",
+          "advanced/custom-response.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md"
+        ]
+      },
+      {
+        "id": "t038",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.12,
+        "passes_gate": true,
+        "found": [
+          "advanced/middleware.md",
+          "deployment/manually.md",
+          "advanced/middleware.md",
+          "alternatives.md",
+          "async.md"
+        ]
+      },
+      {
+        "id": "t039",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.69,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-cookies.md",
+          "advanced/response-cookies.md",
+          "advanced/response-cookies.md",
+          "reference/response.md",
+          "tutorial/cookie-params.md"
+        ]
+      },
+      {
+        "id": "t040",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 8.67,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-directly.md",
+          "advanced/custom-response.md",
+          "advanced/response-directly.md",
+          "advanced/response-headers.md",
+          "advanced/response-cookies.md"
+        ]
+      },
+      {
+        "id": "t041",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 3,
+        "best_score": 2.86,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "tutorial/middleware.md",
+          "advanced/response-headers.md",
+          "reference/response.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t042",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.36,
+        "passes_gate": true,
+        "found": [
+          "advanced/stream-data.md",
+          "tutorial/request-files.md",
+          "advanced/stream-data.md",
+          "tutorial/request-files.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t043",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.57,
+        "passes_gate": true,
+        "found": [
+          "advanced/strict-content-type.md",
+          "advanced/strict-content-type.md",
+          "release-notes.md",
+          "tutorial/response-model.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t044",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 6.74,
+        "passes_gate": true,
+        "found": [
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/sub-applications.md"
+        ]
+      },
+      {
+        "id": "t045",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 6.74,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/settings.md"
+        ]
+      },
+      {
+        "id": "t046",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 4.72,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-events.md",
+          "advanced/testing-events.md",
+          "advanced/events.md",
+          "advanced/events.md",
+          "features.md"
+        ]
+      },
+      {
+        "id": "t047",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.67,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-websockets.md",
+          "advanced/testing-websockets.md",
+          "features.md",
+          "reference/testclient.md",
+          "advanced/websockets.md"
+        ]
+      },
+      {
+        "id": "t048",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 5.75,
+        "passes_gate": true,
+        "found": [
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/using-request-directly.md",
+          "tutorial/body.md",
+          "tutorial/body.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t049",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.71,
+        "passes_gate": true,
+        "found": [
+          "advanced/wsgi.md",
+          "alternatives.md",
+          "advanced/wsgi.md",
+          "advanced/wsgi.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t050",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 5.5,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md",
+          "release-notes.md",
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/configure-swagger-ui.md"
+        ]
+      },
+      {
+        "id": "t051",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 6.36,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-request-and-route.md",
+          "how-to/custom-request-and-route.md",
+          "release-notes.md",
+          "how-to/custom-request-and-route.md",
+          "how-to/custom-request-and-route.md"
+        ]
+      },
+      {
+        "id": "t052",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 4.09,
+        "passes_gate": true,
+        "found": [
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "release-notes.md",
+          "release-notes.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md"
+        ]
+      },
+      {
+        "id": "t053",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 5.01,
+        "passes_gate": true,
+        "found": [
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md"
+        ]
+      },
+      {
+        "id": "t054",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 8.29,
+        "passes_gate": true,
+        "found": [
+          "how-to/authentication-error-status-code.md",
+          "advanced/security/http-basic-auth.md",
+          "release-notes.md",
+          "advanced/additional-status-codes.md",
+          "tutorial/security/first-steps.md"
+        ]
+      },
+      {
+        "id": "t055",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 4,
+        "best_score": 6.34,
+        "passes_gate": true,
+        "found": [
+          "how-to/extending-openapi.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "how-to/extending-openapi.md",
+          "how-to/extending-openapi.md",
+          "advanced/generate-clients.md"
+        ]
+      },
+      {
+        "id": "t056",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.77,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/settings.md"
+        ]
+      },
+      {
+        "id": "t057",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.59,
+        "passes_gate": true,
+        "found": [
+          "deployment/versions.md",
+          "deployment/versions.md",
+          "deployment/versions.md",
+          "release-notes.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t058",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.54,
+        "passes_gate": true,
+        "found": [
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t059",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 3,
+        "best_score": 5.94,
+        "passes_gate": true,
+        "found": [
+          "index.md",
+          "tutorial/index.md",
+          "deployment/fastapicloud.md",
+          "tutorial/first-steps.md",
+          "index.md"
+        ]
+      },
+      {
+        "id": "t060",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 3,
+        "best_score": -3.36,
+        "passes_gate": true,
+        "found": [
+          "deployment/server-workers.md",
+          "deployment/manually.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/fastapicloud.md"
+        ]
+      },
+      {
+        "id": "t061",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 6.91,
+        "passes_gate": true,
+        "found": [
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "deployment/docker.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t062",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": -0.26,
+        "passes_gate": true,
+        "found": [
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/docker.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t063",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 4.12,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/additional-responses.md",
+          "advanced/additional-responses.md",
+          "advanced/additional-responses.md",
+          "advanced/response-headers.md"
+        ]
+      },
+      {
+        "id": "t064",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.36,
+        "passes_gate": true,
+        "found": [
+          "tutorial/bigger-applications.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t065",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.11,
+        "passes_gate": true,
+        "found": [
+          "reference/background.md",
+          "tutorial/background-tasks.md",
+          "release-notes.md",
+          "tutorial/background-tasks.md",
+          "advanced/advanced-dependencies.md"
+        ]
+      },
+      {
+        "id": "t066",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 4,
+        "best_score": 5.72,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-directly.md",
+          "tutorial/encoder.md",
+          "tutorial/body-updates.md",
+          "tutorial/encoder.md",
+          "advanced/response-directly.md"
+        ]
+      },
+      {
+        "id": "t067",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.07,
+        "passes_gate": true,
+        "found": [
+          "tutorial/handling-errors.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "reference/exceptions.md",
+          "tutorial/dependencies/dependencies-with-yield.md"
+        ]
+      },
+      {
+        "id": "t068",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 5.88,
+        "passes_gate": true,
+        "found": [
+          "reference/request.md",
+          "reference/httpconnection.md",
+          "reference/websockets.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t069",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.87,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t070",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": -0.42,
+        "passes_gate": true,
+        "found": [
+          "advanced/using-request-directly.md",
+          "advanced/behind-a-proxy.md",
+          "deployment/https.md",
+          "deployment/https.md",
+          "advanced/behind-a-proxy.md"
+        ]
+      },
+      {
+        "id": "t071",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 6.33,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/custom-response.md",
+          "advanced/additional-responses.md",
+          "reference/response.md",
+          "reference/responses.md"
+        ]
+      },
+      {
+        "id": "t072",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.01,
+        "passes_gate": true,
+        "found": [
+          "tutorial/metadata.md",
+          "tutorial/metadata.md",
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t073",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.39,
+        "passes_gate": true,
+        "found": [
+          "reference/sse.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md"
+        ]
+      },
+      {
+        "id": "t074",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 6.2,
+        "passes_gate": true,
+        "found": [
+          "tutorial/debugging.md",
+          "tutorial/debugging.md",
+          "tutorial/debugging.md",
+          "fastapi-cli.md",
+          "tutorial/first-steps.md"
+        ]
+      },
+      {
+        "id": "t075",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 5.83,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md"
+        ]
+      },
+      {
+        "id": "t076",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.27,
+        "passes_gate": true,
+        "found": [
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/static-files.md"
+        ]
+      },
+      {
+        "id": "t077",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 1.33,
+        "passes_gate": true,
+        "found": [
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t078",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 4.9,
+        "passes_gate": true,
+        "found": [
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-params.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "advanced/response-cookies.md"
+        ]
+      },
+      {
+        "id": "t079",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.98,
+        "passes_gate": true,
+        "found": [
+          "tutorial/stream-json-lines.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/stream-json-lines.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "tutorial/stream-json-lines.md"
+        ]
+      },
+      {
+        "id": "t080",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 3,
+        "best_score": 5.41,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-change-status-code.md",
+          "advanced/response-headers.md",
+          "advanced/response-headers.md",
+          "advanced/response-cookies.md",
+          "advanced/response-cookies.md"
+        ]
+      },
+      {
+        "id": "t081",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.11,
+        "passes_gate": false,
+        "found": [
+          "async.md",
+          "tutorial/response-status-code.md",
+          "advanced/testing-dependencies.md",
+          "tutorial/middleware.md",
+          "tutorial/server-sent-events.md"
+        ]
+      },
+      {
+        "id": "t082",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.91,
+        "passes_gate": false,
+        "found": [
+          "advanced/dataclasses.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t083",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.62,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "tutorial/security/first-steps.md",
+          "release-notes.md",
+          "release-notes.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t084",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.09,
+        "passes_gate": false,
+        "found": [
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "deployment/concepts.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t085",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.21,
+        "passes_gate": false,
+        "found": [
+          "how-to/graphql.md",
+          "index.md",
+          "alternatives.md",
+          "how-to/graphql.md",
+          "features.md"
+        ]
+      },
+      {
+        "id": "t086",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.96,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "advanced/advanced-dependencies.md",
+          "async.md"
+        ]
+      },
+      {
+        "id": "t087",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.15,
+        "passes_gate": false,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "release-notes.md",
+          "how-to/extending-openapi.md",
+          "tutorial/encoder.md",
+          "_llm-test.md"
+        ]
+      },
+      {
+        "id": "t088",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.04,
+        "passes_gate": false,
+        "found": [
+          "index.md",
+          "advanced/wsgi.md",
+          "release-notes.md",
+          "tutorial/response-model.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t089",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -8.18,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "tutorial/extra-data-types.md",
+          "release-notes.md",
+          "tutorial/cors.md",
+          "advanced/wsgi.md"
+        ]
+      },
+      {
+        "id": "t090",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.08,
+        "passes_gate": false,
+        "found": [
+          "editor-support.md",
+          "tutorial/security/oauth2-jwt.md",
+          "advanced/opentelemetry.md",
+          "fastapi-cli.md",
+          "advanced/response-headers.md"
+        ]
+      },
+      {
+        "id": "t091",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -1.17,
+        "passes_gate": true,
+        "found": [
+          "tutorial/background-tasks.md",
+          "advanced/opentelemetry.md",
+          "tutorial/background-tasks.md",
+          "how-to/conditional-openapi.md",
+          "tutorial/first-steps.md"
+        ]
+      },
+      {
+        "id": "t092",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 1.88,
+        "passes_gate": true,
+        "found": [
+          "advanced/generate-clients.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t093",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.97,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "deployment/concepts.md",
+          "fastapi-cli.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md"
+        ]
+      },
+      {
+        "id": "t094",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.17,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md",
+          "advanced/opentelemetry.md"
+        ]
+      },
+      {
+        "id": "t095",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -0.85,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/testing.md",
+          "release-notes.md",
+          "tutorial/testing.md",
+          "advanced/async-tests.md"
+        ]
+      },
+      {
+        "id": "t096",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 0.98,
+        "passes_gate": true,
+        "found": [
+          "deployment/docker.md",
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "advanced/opentelemetry.md",
+          "deployment/server-workers.md"
+        ]
+      },
+      {
+        "id": "t097",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -3.36,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/sql-databases.md"
+        ]
+      },
+      {
+        "id": "t098",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -1.61,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/background-tasks.md",
+          "advanced/websockets.md",
+          "tutorial/frontend.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t099",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 1.95,
+        "passes_gate": true,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "advanced/security/oauth2-scopes.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/simple-oauth2.md",
+          "tutorial/security/simple-oauth2.md"
+        ]
+      },
+      {
+        "id": "t100",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -4.42,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/server-sent-events.md",
+          "advanced/stream-data.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      }
+    ]
+  },
+  "fastapi_docs_headings": {
+    "summary": {
+      "hit_rate": 0.9375,
+      "mrr": 0.8008333333333333,
+      "chunk_hit_rate": 0.725,
+      "chunk_mrr": 0.5325,
+      "gate_passed_answerable": 1.0,
+      "gate_blocked_unanswerable": 0.5,
+      "missed": [
+        "t014",
+        "t020",
+        "t030",
+        "t031",
+        "t063"
+      ],
+      "chunk_missed": [
+        "t002",
+        "t003",
+        "t006",
+        "t014",
+        "t016",
+        "t020",
+        "t022",
+        "t023",
+        "t026",
+        "t030",
+        "t031",
+        "t032",
+        "t034",
+        "t050",
+        "t052",
+        "t053",
+        "t055",
+        "t062",
+        "t063",
+        "t064",
+        "t070",
+        "t071"
+      ]
+    },
+    "questions": [
+      {
+        "id": "t001",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": -2.15,
+        "passes_gate": true,
+        "found": [
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t002",
+        "answerable": true,
+        "hit_position": 5,
+        "evidence_position": null,
+        "best_score": 1.84,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "tutorial/header-param-models.md",
+          "tutorial/sql-databases.md",
+          "tutorial/sql-databases.md",
+          "tutorial/body-updates.md"
+        ]
+      },
+      {
+        "id": "t003",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 3.3,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body.md",
+          "tutorial/body.md",
+          "tutorial/body-nested-models.md",
+          "tutorial/body-nested-models.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t004",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 0.38,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-fields.md",
+          "release-notes.md",
+          "tutorial/request-form-models.md",
+          "tutorial/body-multiple-params.md",
+          "advanced/json-base64-bytes.md"
+        ]
+      },
+      {
+        "id": "t005",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": -2.05,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "tutorial/extra-models.md",
+          "tutorial/response-model.md",
+          "how-to/conditional-openapi.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t006",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.23,
+        "passes_gate": true,
+        "found": [
+          "tutorial/extra-data-types.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/body-nested-models.md",
+          "tutorial/body-nested-models.md",
+          "tutorial/extra-data-types.md"
+        ]
+      },
+      {
+        "id": "t007",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 4,
+        "best_score": -1.41,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t008",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.09,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-param-models.md",
+          "release-notes.md",
+          "tutorial/query-param-models.md",
+          "tutorial/query-param-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t009",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 2.36,
+        "passes_gate": true,
+        "found": [
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/body-fields.md",
+          "tutorial/query-params.md"
+        ]
+      },
+      {
+        "id": "t010",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.96,
+        "passes_gate": true,
+        "found": [
+          "tutorial/cookie-param-models.md",
+          "release-notes.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-param-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t011",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 5,
+        "best_score": 7.48,
+        "passes_gate": true,
+        "found": [
+          "tutorial/header-param-models.md",
+          "tutorial/header-params.md",
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/header-params.md"
+        ]
+      },
+      {
+        "id": "t012",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 4.81,
+        "passes_gate": true,
+        "found": [
+          "tutorial/header-param-models.md",
+          "tutorial/header-param-models.md",
+          "tutorial/query-param-models.md",
+          "release-notes.md",
+          "tutorial/cookie-param-models.md"
+        ]
+      },
+      {
+        "id": "t013",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.59,
+        "passes_gate": true,
+        "found": [
+          "tutorial/path-operation-configuration.md",
+          "tutorial/path-operation-configuration.md",
+          "tutorial/query-params-str-validations.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t014",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 6.51,
+        "passes_gate": true,
+        "found": [
+          "advanced/path-operation-advanced-configuration.md",
+          "tutorial/body-fields.md",
+          "release-notes.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t015",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.42,
+        "passes_gate": true,
+        "found": [
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md",
+          "tutorial/frontend.md",
+          "how-to/custom-docs-ui-assets.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t016",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 2.91,
+        "passes_gate": true,
+        "found": [
+          "reference/sse.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md"
+        ]
+      },
+      {
+        "id": "t017",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.09,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "advanced/advanced-dependencies.md",
+          "release-notes.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/dependencies-with-yield.md"
+        ]
+      },
+      {
+        "id": "t018",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 0.32,
+        "passes_gate": true,
+        "found": [
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-files.md",
+          "tutorial/request-files.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t019",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 4,
+        "best_score": 7.85,
+        "passes_gate": true,
+        "found": [
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "advanced/security/oauth2-scopes.md"
+        ]
+      },
+      {
+        "id": "t020",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 2.65,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t021",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.96,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "release-notes.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md"
+        ]
+      },
+      {
+        "id": "t022",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 1.55,
+        "passes_gate": true,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md"
+        ]
+      },
+      {
+        "id": "t023",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 3.57,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-docs-ui-assets.md",
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md",
+          "tutorial/bigger-applications.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t024",
+        "answerable": true,
+        "hit_position": 5,
+        "evidence_position": 5,
+        "best_score": 6.97,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "advanced/response-directly.md",
+          "advanced/custom-response.md",
+          "advanced/custom-response.md",
+          "tutorial/encoder.md"
+        ]
+      },
+      {
+        "id": "t025",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 7.05,
+        "passes_gate": true,
+        "found": [
+          "advanced/security/oauth2-scopes.md",
+          "reference/security/index.md",
+          "reference/dependencies.md",
+          "advanced/security/oauth2-scopes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t026",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.62,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-multiple-params.md",
+          "tutorial/testing.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/body-nested-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t027",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 8.2,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/request-form-models.md",
+          "release-notes.md",
+          "tutorial/query-param-models.md",
+          "tutorial/header-param-models.md"
+        ]
+      },
+      {
+        "id": "t028",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 5.55,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-responses.md",
+          "advanced/additional-responses.md",
+          "tutorial/extra-models.md",
+          "tutorial/response-model.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t029",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.4,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-status-codes.md",
+          "advanced/additional-status-codes.md",
+          "advanced/response-change-status-code.md",
+          "advanced/custom-response.md",
+          "tutorial/response-status-code.md"
+        ]
+      },
+      {
+        "id": "t030",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 4.12,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "release-notes.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/security/simple-oauth2.md",
+          "reference/parameters.md"
+        ]
+      },
+      {
+        "id": "t031",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 5.9,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "tutorial/request-form-models.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/extra-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t032",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 4.97,
+        "passes_gate": true,
+        "found": [
+          "advanced/dataclasses.md",
+          "tutorial/body-nested-models.md",
+          "benchmarks.md",
+          "advanced/dataclasses.md",
+          "advanced/dataclasses.md"
+        ]
+      },
+      {
+        "id": "t033",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 1.35,
+        "passes_gate": true,
+        "found": [
+          "advanced/events.md",
+          "advanced/events.md",
+          "advanced/events.md",
+          "advanced/testing-events.md",
+          "advanced/testing-events.md"
+        ]
+      },
+      {
+        "id": "t034",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 4.12,
+        "passes_gate": true,
+        "found": [
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md"
+        ]
+      },
+      {
+        "id": "t035",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.99,
+        "passes_gate": true,
+        "found": [
+          "advanced/openapi-webhooks.md",
+          "advanced/custom-response.md",
+          "advanced/openapi-webhooks.md",
+          "advanced/openapi-webhooks.md",
+          "advanced/openapi-webhooks.md"
+        ]
+      },
+      {
+        "id": "t036",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.01,
+        "passes_gate": true,
+        "found": [
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md"
+        ]
+      },
+      {
+        "id": "t037",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.39,
+        "passes_gate": true,
+        "found": [
+          "advanced/json-base64-bytes.md",
+          "advanced/custom-response.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md"
+        ]
+      },
+      {
+        "id": "t038",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.81,
+        "passes_gate": true,
+        "found": [
+          "advanced/middleware.md",
+          "deployment/manually.md",
+          "alternatives.md",
+          "alternatives.md",
+          "how-to/graphql.md"
+        ]
+      },
+      {
+        "id": "t039",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.4,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-cookies.md",
+          "advanced/response-cookies.md",
+          "advanced/response-cookies.md",
+          "release-notes.md",
+          "reference/response.md"
+        ]
+      },
+      {
+        "id": "t040",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 8.69,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-directly.md",
+          "advanced/custom-response.md",
+          "advanced/response-directly.md",
+          "advanced/response-cookies.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t041",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 2.86,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/response-headers.md",
+          "tutorial/frontend.md",
+          "reference/response.md",
+          "reference/responses.md"
+        ]
+      },
+      {
+        "id": "t042",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.84,
+        "passes_gate": true,
+        "found": [
+          "advanced/stream-data.md",
+          "tutorial/request-files.md",
+          "tutorial/request-files.md",
+          "advanced/custom-response.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t043",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.32,
+        "passes_gate": true,
+        "found": [
+          "advanced/strict-content-type.md",
+          "release-notes.md",
+          "advanced/strict-content-type.md",
+          "tutorial/response-model.md",
+          "advanced/strict-content-type.md"
+        ]
+      },
+      {
+        "id": "t044",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.84,
+        "passes_gate": true,
+        "found": [
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/behind-a-proxy.md"
+        ]
+      },
+      {
+        "id": "t045",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 7.31,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "release-notes.md",
+          "advanced/settings.md"
+        ]
+      },
+      {
+        "id": "t046",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.67,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-events.md",
+          "advanced/testing-events.md",
+          "advanced/events.md",
+          "release-notes.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t047",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.67,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-websockets.md",
+          "advanced/testing-websockets.md",
+          "advanced/websockets.md",
+          "reference/testclient.md",
+          "advanced/websockets.md"
+        ]
+      },
+      {
+        "id": "t048",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.76,
+        "passes_gate": true,
+        "found": [
+          "advanced/using-request-directly.md",
+          "tutorial/body.md",
+          "tutorial/body.md",
+          "release-notes.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t049",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 3.99,
+        "passes_gate": true,
+        "found": [
+          "advanced/wsgi.md",
+          "advanced/wsgi.md",
+          "advanced/wsgi.md",
+          "advanced/templates.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t050",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 5.22,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md",
+          "release-notes.md",
+          "how-to/configure-swagger-ui.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t051",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.01,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-request-and-route.md",
+          "release-notes.md",
+          "how-to/custom-request-and-route.md",
+          "how-to/custom-request-and-route.md",
+          "how-to/custom-request-and-route.md"
+        ]
+      },
+      {
+        "id": "t052",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 5.63,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "release-notes.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md"
+        ]
+      },
+      {
+        "id": "t053",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 5.13,
+        "passes_gate": true,
+        "found": [
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "release-notes.md",
+          "how-to/separate-openapi-schemas.md"
+        ]
+      },
+      {
+        "id": "t054",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 8.29,
+        "passes_gate": true,
+        "found": [
+          "how-to/authentication-error-status-code.md",
+          "advanced/security/http-basic-auth.md",
+          "release-notes.md",
+          "advanced/additional-status-codes.md",
+          "how-to/authentication-error-status-code.md"
+        ]
+      },
+      {
+        "id": "t055",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 5.56,
+        "passes_gate": true,
+        "found": [
+          "how-to/extending-openapi.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "how-to/extending-openapi.md",
+          "advanced/generate-clients.md",
+          "how-to/extending-openapi.md"
+        ]
+      },
+      {
+        "id": "t056",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 6.65,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/settings.md"
+        ]
+      },
+      {
+        "id": "t057",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.59,
+        "passes_gate": true,
+        "found": [
+          "deployment/versions.md",
+          "deployment/versions.md",
+          "advanced/dataclasses.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t058",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 0.99,
+        "passes_gate": true,
+        "found": [
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t059",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 6.07,
+        "passes_gate": true,
+        "found": [
+          "tutorial/first-steps.md",
+          "deployment/fastapicloud.md",
+          "tutorial/index.md",
+          "index.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t060",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 3,
+        "best_score": -2.07,
+        "passes_gate": true,
+        "found": [
+          "deployment/manually.md",
+          "deployment/server-workers.md",
+          "deployment/concepts.md",
+          "deployment/index.md",
+          "deployment/fastapicloud.md"
+        ]
+      },
+      {
+        "id": "t061",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 6.09,
+        "passes_gate": true,
+        "found": [
+          "deployment/server-workers.md",
+          "deployment/docker.md",
+          "deployment/server-workers.md",
+          "deployment/concepts.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t062",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": -1.78,
+        "passes_gate": true,
+        "found": [
+          "deployment/server-workers.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/docker.md",
+          "deployment/concepts.md"
+        ]
+      },
+      {
+        "id": "t063",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 4.48,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/additional-responses.md",
+          "tutorial/response-model.md",
+          "advanced/response-directly.md",
+          "advanced/additional-responses.md"
+        ]
+      },
+      {
+        "id": "t064",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 3.41,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/bigger-applications.md",
+          "release-notes.md",
+          "tutorial/frontend.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t065",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.11,
+        "passes_gate": true,
+        "found": [
+          "reference/background.md",
+          "release-notes.md",
+          "advanced/opentelemetry.md",
+          "tutorial/background-tasks.md",
+          "advanced/advanced-dependencies.md"
+        ]
+      },
+      {
+        "id": "t066",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 5.72,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-directly.md",
+          "tutorial/encoder.md",
+          "tutorial/encoder.md",
+          "tutorial/body-updates.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t067",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.07,
+        "passes_gate": true,
+        "found": [
+          "tutorial/handling-errors.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "tutorial/handling-errors.md",
+          "reference/exceptions.md"
+        ]
+      },
+      {
+        "id": "t068",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 5.88,
+        "passes_gate": true,
+        "found": [
+          "reference/request.md",
+          "reference/httpconnection.md",
+          "reference/websockets.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t069",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.89,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params.md",
+          "tutorial/query-params.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t070",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": -0.41,
+        "passes_gate": true,
+        "found": [
+          "advanced/using-request-directly.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/using-request-directly.md"
+        ]
+      },
+      {
+        "id": "t071",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 6.62,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/stream-data.md",
+          "advanced/custom-response.md",
+          "reference/response.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t072",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.26,
+        "passes_gate": true,
+        "found": [
+          "tutorial/metadata.md",
+          "deployment/docker.md",
+          "index.md",
+          "index.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t073",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.39,
+        "passes_gate": true,
+        "found": [
+          "reference/sse.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/stream-json-lines.md"
+        ]
+      },
+      {
+        "id": "t074",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.11,
+        "passes_gate": true,
+        "found": [
+          "tutorial/debugging.md",
+          "tutorial/debugging.md",
+          "advanced/opentelemetry.md",
+          "tutorial/sql-databases.md",
+          "fastapi-cli.md"
+        ]
+      },
+      {
+        "id": "t075",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 4.27,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "how-to/custom-request-and-route.md",
+          "tutorial/handling-errors.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t076",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.0,
+        "passes_gate": true,
+        "found": [
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/static-files.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t077",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 0.93,
+        "passes_gate": true,
+        "found": [
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t078",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 5,
+        "best_score": 4.66,
+        "passes_gate": true,
+        "found": [
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-params.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-params.md"
+        ]
+      },
+      {
+        "id": "t079",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.99,
+        "passes_gate": true,
+        "found": [
+          "tutorial/stream-json-lines.md",
+          "advanced/custom-response.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "tutorial/stream-json-lines.md",
+          "advanced/generate-clients.md"
+        ]
+      },
+      {
+        "id": "t080",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.22,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-headers.md",
+          "advanced/response-cookies.md",
+          "tutorial/response-model.md",
+          "tutorial/response-model.md",
+          "advanced/dataclasses.md"
+        ]
+      },
+      {
+        "id": "t081",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.15,
+        "passes_gate": false,
+        "found": [
+          "tutorial/request-files.md",
+          "alternatives.md",
+          "advanced/security/http-basic-auth.md",
+          "index.md",
+          "async.md"
+        ]
+      },
+      {
+        "id": "t082",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.19,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "alternatives.md",
+          "alternatives.md",
+          "alternatives.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t083",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.73,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "history-design-future.md",
+          "tutorial/security/first-steps.md",
+          "advanced/custom-response.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t084",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.5,
+        "passes_gate": false,
+        "found": [
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "release-notes.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md"
+        ]
+      },
+      {
+        "id": "t085",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.21,
+        "passes_gate": false,
+        "found": [
+          "how-to/graphql.md",
+          "advanced/advanced-python-types.md",
+          "index.md",
+          "alternatives.md",
+          "features.md"
+        ]
+      },
+      {
+        "id": "t086",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.68,
+        "passes_gate": false,
+        "found": [
+          "contributing.md",
+          "release-notes.md",
+          "help-fastapi.md",
+          "advanced/advanced-dependencies.md",
+          "translations.md"
+        ]
+      },
+      {
+        "id": "t087",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.16,
+        "passes_gate": false,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "release-notes.md",
+          "tutorial/path-operation-configuration.md",
+          "async.md",
+          "tutorial/extra-models.md"
+        ]
+      },
+      {
+        "id": "t088",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.19,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "deployment/index.md",
+          "tutorial/background-tasks.md",
+          "release-notes.md",
+          "tutorial/security/simple-oauth2.md"
+        ]
+      },
+      {
+        "id": "t089",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.46,
+        "passes_gate": false,
+        "found": [
+          "advanced/wsgi.md",
+          "tutorial/extra-data-types.md",
+          "deployment/docker.md",
+          "deployment/concepts.md",
+          "index.md"
+        ]
+      },
+      {
+        "id": "t090",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.95,
+        "passes_gate": false,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "fastapi-cli.md",
+          "how-to/custom-request-and-route.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "how-to/custom-request-and-route.md"
+        ]
+      },
+      {
+        "id": "t091",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 2.12,
+        "passes_gate": true,
+        "found": [
+          "tutorial/background-tasks.md",
+          "release-notes.md",
+          "tutorial/cors.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t092",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 1.28,
+        "passes_gate": true,
+        "found": [
+          "advanced/generate-clients.md",
+          "tutorial/bigger-applications.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md"
+        ]
+      },
+      {
+        "id": "t093",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.71,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "deployment/concepts.md",
+          "fastapi-cli.md",
+          "deployment/concepts.md",
+          "fastapi-cli.md"
+        ]
+      },
+      {
+        "id": "t094",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.14,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md"
+        ]
+      },
+      {
+        "id": "t095",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -0.68,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "virtual-environments.md",
+          "advanced/async-tests.md",
+          "tutorial/testing.md"
+        ]
+      },
+      {
+        "id": "t096",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -0.9,
+        "passes_gate": true,
+        "found": [
+          "deployment/docker.md",
+          "deployment/server-workers.md",
+          "advanced/opentelemetry.md",
+          "deployment/server-workers.md",
+          "deployment/server-workers.md"
+        ]
+      },
+      {
+        "id": "t097",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -3.0,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/sql-databases.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t098",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -1.5,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "how-to/extending-openapi.md",
+          "tutorial/frontend.md",
+          "how-to/extending-openapi.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t099",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 1.65,
+        "passes_gate": true,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/simple-oauth2.md"
+        ]
+      },
+      {
+        "id": "t100",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -4.42,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/server-sent-events.md",
+          "advanced/websockets.md",
+          "release-notes.md"
+        ]
+      }
+    ]
+  },
+  "fastapi_docs_semantic": {
+    "summary": {
+      "hit_rate": 0.9625,
+      "mrr": 0.8097916666666667,
+      "chunk_hit_rate": 0.7625,
+      "chunk_mrr": 0.514375,
+      "gate_passed_answerable": 1.0,
+      "gate_blocked_unanswerable": 0.5,
+      "missed": [
+        "t020",
+        "t031",
+        "t063"
+      ],
+      "chunk_missed": [
+        "t001",
+        "t002",
+        "t003",
+        "t006",
+        "t007",
+        "t011",
+        "t014",
+        "t016",
+        "t019",
+        "t020",
+        "t026",
+        "t029",
+        "t031",
+        "t052",
+        "t063",
+        "t064",
+        "t069",
+        "t070",
+        "t071"
+      ]
+    },
+    "questions": [
+      {
+        "id": "t001",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": -1.91,
+        "passes_gate": true,
+        "found": [
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/testing.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md"
+        ]
+      },
+      {
+        "id": "t002",
+        "answerable": true,
+        "hit_position": 4,
+        "evidence_position": null,
+        "best_score": 1.84,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "tutorial/sql-databases.md",
+          "tutorial/header-param-models.md",
+          "tutorial/body-updates.md",
+          "tutorial/sql-databases.md"
+        ]
+      },
+      {
+        "id": "t003",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.63,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-nested-models.md",
+          "tutorial/body-nested-models.md",
+          "release-notes.md",
+          "tutorial/body-nested-models.md",
+          "tutorial/body.md"
+        ]
+      },
+      {
+        "id": "t004",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.15,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-fields.md",
+          "release-notes.md",
+          "tutorial/body-multiple-params.md",
+          "release-notes.md",
+          "advanced/json-base64-bytes.md"
+        ]
+      },
+      {
+        "id": "t005",
+        "answerable": true,
+        "hit_position": 5,
+        "evidence_position": 5,
+        "best_score": -0.4,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "tutorial/response-model.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/response-model.md",
+          "tutorial/extra-models.md"
+        ]
+      },
+      {
+        "id": "t006",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.38,
+        "passes_gate": true,
+        "found": [
+          "tutorial/extra-data-types.md",
+          "tutorial/body-nested-models.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/body-multiple-params.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t007",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": -1.44,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t008",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.91,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-param-models.md",
+          "release-notes.md",
+          "tutorial/query-param-models.md",
+          "tutorial/query-param-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t009",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 1.69,
+        "passes_gate": true,
+        "found": [
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/body-fields.md",
+          "tutorial/query-params.md"
+        ]
+      },
+      {
+        "id": "t010",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.78,
+        "passes_gate": true,
+        "found": [
+          "tutorial/cookie-param-models.md",
+          "release-notes.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/body-fields.md",
+          "tutorial/query-param-models.md"
+        ]
+      },
+      {
+        "id": "t011",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 5.3,
+        "passes_gate": true,
+        "found": [
+          "tutorial/header-params.md",
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/header-param-models.md",
+          "tutorial/header-param-models.md"
+        ]
+      },
+      {
+        "id": "t012",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 4.81,
+        "passes_gate": true,
+        "found": [
+          "tutorial/header-param-models.md",
+          "tutorial/header-param-models.md",
+          "tutorial/query-param-models.md",
+          "release-notes.md",
+          "tutorial/request-form-models.md"
+        ]
+      },
+      {
+        "id": "t013",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.59,
+        "passes_gate": true,
+        "found": [
+          "tutorial/path-operation-configuration.md",
+          "tutorial/path-operation-configuration.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t014",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 6.03,
+        "passes_gate": true,
+        "found": [
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "tutorial/schema-extra-example.md",
+          "release-notes.md",
+          "tutorial/body-fields.md"
+        ]
+      },
+      {
+        "id": "t015",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 3.42,
+        "passes_gate": true,
+        "found": [
+          "tutorial/static-files.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t016",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 2.91,
+        "passes_gate": true,
+        "found": [
+          "reference/sse.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md"
+        ]
+      },
+      {
+        "id": "t017",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.86,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "advanced/advanced-dependencies.md",
+          "advanced/advanced-dependencies.md"
+        ]
+      },
+      {
+        "id": "t018",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 0.59,
+        "passes_gate": true,
+        "found": [
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-forms-and-files.md",
+          "tutorial/request-files.md",
+          "release-notes.md",
+          "tutorial/request-files.md"
+        ]
+      },
+      {
+        "id": "t019",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 6.62,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "tutorial/security/get-current-user.md"
+        ]
+      },
+      {
+        "id": "t020",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 1.5,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/dependencies/sub-dependencies.md",
+          "release-notes.md",
+          "advanced/testing-dependencies.md",
+          "tutorial/dependencies/sub-dependencies.md"
+        ]
+      },
+      {
+        "id": "t021",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.44,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "tutorial/dependencies/dependencies-in-path-operation-decorators.md",
+          "advanced/testing-dependencies.md",
+          "release-notes.md",
+          "tutorial/dependencies/sub-dependencies.md"
+        ]
+      },
+      {
+        "id": "t022",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 1.51,
+        "passes_gate": true,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md",
+          "tutorial/security/get-current-user.md"
+        ]
+      },
+      {
+        "id": "t023",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 4.08,
+        "passes_gate": true,
+        "found": [
+          "tutorial/bigger-applications.md",
+          "tutorial/static-files.md",
+          "how-to/custom-docs-ui-assets.md",
+          "advanced/sub-applications.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t024",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.19,
+        "passes_gate": true,
+        "found": [
+          "tutorial/encoder.md",
+          "advanced/response-directly.md",
+          "release-notes.md",
+          "advanced/response-directly.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t025",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 7.05,
+        "passes_gate": true,
+        "found": [
+          "advanced/security/oauth2-scopes.md",
+          "reference/security/index.md",
+          "advanced/security/oauth2-scopes.md",
+          "release-notes.md",
+          "advanced/security/oauth2-scopes.md"
+        ]
+      },
+      {
+        "id": "t026",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 3.06,
+        "passes_gate": true,
+        "found": [
+          "tutorial/body-multiple-params.md",
+          "tutorial/testing.md",
+          "tutorial/body-multiple-params.md",
+          "tutorial/body-nested-models.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t027",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 3,
+        "best_score": 8.15,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/request-form-models.md",
+          "tutorial/request-form-models.md",
+          "tutorial/header-param-models.md"
+        ]
+      },
+      {
+        "id": "t028",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.63,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-responses.md",
+          "advanced/additional-responses.md",
+          "tutorial/response-model.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "tutorial/response-model.md"
+        ]
+      },
+      {
+        "id": "t029",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 6.52,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-status-codes.md",
+          "advanced/response-change-status-code.md",
+          "advanced/custom-response.md",
+          "advanced/custom-response.md",
+          "tutorial/response-status-code.md"
+        ]
+      },
+      {
+        "id": "t030",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 4,
+        "best_score": 4.12,
+        "passes_gate": true,
+        "found": [
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/dependencies/classes-as-dependencies.md"
+        ]
+      },
+      {
+        "id": "t031",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.94,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "tutorial/extra-models.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/response-model.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t032",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 3,
+        "best_score": 5.68,
+        "passes_gate": true,
+        "found": [
+          "tutorial/response-model.md",
+          "advanced/dataclasses.md",
+          "advanced/dataclasses.md",
+          "index.md",
+          "benchmarks.md"
+        ]
+      },
+      {
+        "id": "t033",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.6,
+        "passes_gate": true,
+        "found": [
+          "advanced/events.md",
+          "advanced/events.md",
+          "advanced/testing-events.md",
+          "advanced/testing-events.md",
+          "advanced/events.md"
+        ]
+      },
+      {
+        "id": "t034",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 4,
+        "best_score": 3.9,
+        "passes_gate": true,
+        "found": [
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md",
+          "advanced/openapi-callbacks.md"
+        ]
+      },
+      {
+        "id": "t035",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.59,
+        "passes_gate": true,
+        "found": [
+          "advanced/openapi-webhooks.md",
+          "advanced/openapi-webhooks.md",
+          "advanced/custom-response.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/openapi-webhooks.md"
+        ]
+      },
+      {
+        "id": "t036",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 3.62,
+        "passes_gate": true,
+        "found": [
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md",
+          "advanced/generate-clients.md"
+        ]
+      },
+      {
+        "id": "t037",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 0.4,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md",
+          "advanced/json-base64-bytes.md"
+        ]
+      },
+      {
+        "id": "t038",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.12,
+        "passes_gate": true,
+        "found": [
+          "advanced/middleware.md",
+          "deployment/manually.md",
+          "async.md",
+          "alternatives.md",
+          "how-to/graphql.md"
+        ]
+      },
+      {
+        "id": "t039",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.97,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-cookies.md",
+          "advanced/response-cookies.md",
+          "reference/response.md",
+          "release-notes.md",
+          "advanced/response-cookies.md"
+        ]
+      },
+      {
+        "id": "t040",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 4,
+        "best_score": 8.74,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-cookies.md",
+          "advanced/custom-response.md",
+          "advanced/response-directly.md",
+          "advanced/response-directly.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t041",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 2.86,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/response-headers.md",
+          "reference/response.md",
+          "tutorial/frontend.md",
+          "reference/responses.md"
+        ]
+      },
+      {
+        "id": "t042",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.25,
+        "passes_gate": true,
+        "found": [
+          "advanced/stream-data.md",
+          "tutorial/request-files.md",
+          "advanced/stream-data.md",
+          "tutorial/request-files.md",
+          "advanced/custom-response.md"
+        ]
+      },
+      {
+        "id": "t043",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 7.57,
+        "passes_gate": true,
+        "found": [
+          "advanced/strict-content-type.md",
+          "advanced/strict-content-type.md",
+          "release-notes.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t044",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 6.07,
+        "passes_gate": true,
+        "found": [
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/sub-applications.md",
+          "advanced/behind-a-proxy.md"
+        ]
+      },
+      {
+        "id": "t045",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 8.25,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t046",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.67,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-events.md",
+          "advanced/testing-events.md",
+          "advanced/events.md",
+          "advanced/events.md",
+          "advanced/events.md"
+        ]
+      },
+      {
+        "id": "t047",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.67,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-websockets.md",
+          "advanced/testing-websockets.md",
+          "reference/testclient.md",
+          "advanced/websockets.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t048",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 4.86,
+        "passes_gate": true,
+        "found": [
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/using-request-directly.md",
+          "tutorial/body.md",
+          "advanced/using-request-directly.md",
+          "advanced/path-operation-advanced-configuration.md"
+        ]
+      },
+      {
+        "id": "t049",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 4.09,
+        "passes_gate": true,
+        "found": [
+          "advanced/wsgi.md",
+          "advanced/wsgi.md",
+          "advanced/wsgi.md",
+          "tutorial/security/oauth2-jwt.md",
+          "advanced/behind-a-proxy.md"
+        ]
+      },
+      {
+        "id": "t050",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.7,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md",
+          "release-notes.md",
+          "how-to/configure-swagger-ui.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t051",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 5,
+        "best_score": 5.35,
+        "passes_gate": true,
+        "found": [
+          "how-to/custom-request-and-route.md",
+          "how-to/custom-request-and-route.md",
+          "release-notes.md",
+          "how-to/custom-request-and-route.md",
+          "how-to/custom-request-and-route.md"
+        ]
+      },
+      {
+        "id": "t052",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": null,
+        "best_score": 5.63,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t053",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.37,
+        "passes_gate": true,
+        "found": [
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "how-to/separate-openapi-schemas.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t054",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 8.29,
+        "passes_gate": true,
+        "found": [
+          "how-to/authentication-error-status-code.md",
+          "advanced/security/http-basic-auth.md",
+          "advanced/additional-status-codes.md",
+          "release-notes.md",
+          "how-to/authentication-error-status-code.md"
+        ]
+      },
+      {
+        "id": "t055",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 6.34,
+        "passes_gate": true,
+        "found": [
+          "how-to/extending-openapi.md",
+          "how-to/extending-openapi.md",
+          "how-to/extending-openapi.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "how-to/extending-openapi.md"
+        ]
+      },
+      {
+        "id": "t056",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 7.77,
+        "passes_gate": true,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md",
+          "advanced/testing-dependencies.md"
+        ]
+      },
+      {
+        "id": "t057",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.66,
+        "passes_gate": true,
+        "found": [
+          "deployment/versions.md",
+          "deployment/versions.md",
+          "deployment/versions.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t058",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 0.55,
+        "passes_gate": true,
+        "found": [
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md"
+        ]
+      },
+      {
+        "id": "t059",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 6.07,
+        "passes_gate": true,
+        "found": [
+          "index.md",
+          "deployment/fastapicloud.md",
+          "index.md",
+          "release-notes.md",
+          "tutorial/first-steps.md"
+        ]
+      },
+      {
+        "id": "t060",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": 4,
+        "best_score": -1.21,
+        "passes_gate": true,
+        "found": [
+          "deployment/manually.md",
+          "deployment/server-workers.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/index.md"
+        ]
+      },
+      {
+        "id": "t061",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 7.03,
+        "passes_gate": true,
+        "found": [
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "deployment/docker.md",
+          "deployment/concepts.md"
+        ]
+      },
+      {
+        "id": "t062",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": -0.86,
+        "passes_gate": true,
+        "found": [
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/concepts.md",
+          "deployment/server-workers.md"
+        ]
+      },
+      {
+        "id": "t063",
+        "answerable": true,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 4.5,
+        "passes_gate": true,
+        "found": [
+          "advanced/additional-responses.md",
+          "advanced/custom-response.md",
+          "advanced/additional-responses.md",
+          "advanced/custom-response.md",
+          "advanced/response-directly.md"
+        ]
+      },
+      {
+        "id": "t064",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 3.41,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "tutorial/bigger-applications.md",
+          "tutorial/bigger-applications.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t065",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.11,
+        "passes_gate": true,
+        "found": [
+          "reference/background.md",
+          "tutorial/background-tasks.md",
+          "release-notes.md",
+          "advanced/advanced-dependencies.md",
+          "tutorial/background-tasks.md"
+        ]
+      },
+      {
+        "id": "t066",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 4,
+        "best_score": 5.3,
+        "passes_gate": true,
+        "found": [
+          "tutorial/encoder.md",
+          "advanced/response-directly.md",
+          "tutorial/body-updates.md",
+          "tutorial/encoder.md",
+          "tutorial/testing.md"
+        ]
+      },
+      {
+        "id": "t067",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 6.66,
+        "passes_gate": true,
+        "found": [
+          "tutorial/handling-errors.md",
+          "advanced/websockets.md",
+          "tutorial/dependencies/dependencies-with-yield.md",
+          "tutorial/handling-errors.md",
+          "tutorial/handling-errors.md"
+        ]
+      },
+      {
+        "id": "t068",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 5.88,
+        "passes_gate": true,
+        "found": [
+          "reference/request.md",
+          "reference/httpconnection.md",
+          "reference/websockets.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t069",
+        "answerable": true,
+        "hit_position": 3,
+        "evidence_position": null,
+        "best_score": 1.94,
+        "passes_gate": true,
+        "found": [
+          "tutorial/query-params.md",
+          "tutorial/path-params-numeric-validations.md",
+          "tutorial/query-params-str-validations.md",
+          "tutorial/query-params.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t070",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": -0.56,
+        "passes_gate": true,
+        "found": [
+          "advanced/using-request-directly.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/behind-a-proxy.md",
+          "advanced/behind-a-proxy.md",
+          "deployment/https.md"
+        ]
+      },
+      {
+        "id": "t071",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": null,
+        "best_score": 5.92,
+        "passes_gate": true,
+        "found": [
+          "advanced/custom-response.md",
+          "advanced/custom-response.md",
+          "reference/response.md",
+          "advanced/additional-responses.md",
+          "reference/responses.md"
+        ]
+      },
+      {
+        "id": "t072",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 2.31,
+        "passes_gate": true,
+        "found": [
+          "tutorial/metadata.md",
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md",
+          "how-to/custom-docs-ui-assets.md"
+        ]
+      },
+      {
+        "id": "t073",
+        "answerable": true,
+        "hit_position": 2,
+        "evidence_position": 2,
+        "best_score": 1.68,
+        "passes_gate": true,
+        "found": [
+          "tutorial/server-sent-events.md",
+          "reference/sse.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md",
+          "tutorial/server-sent-events.md"
+        ]
+      },
+      {
+        "id": "t074",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 7.02,
+        "passes_gate": true,
+        "found": [
+          "tutorial/debugging.md",
+          "tutorial/debugging.md",
+          "tutorial/debugging.md",
+          "tutorial/debugging.md",
+          "fastapi-cli.md"
+        ]
+      },
+      {
+        "id": "t075",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 3,
+        "best_score": 5.82,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "how-to/custom-request-and-route.md",
+          "tutorial/query-params-str-validations.md"
+        ]
+      },
+      {
+        "id": "t076",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 4.69,
+        "passes_gate": true,
+        "found": [
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/frontend.md",
+          "tutorial/static-files.md"
+        ]
+      },
+      {
+        "id": "t077",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 2,
+        "best_score": 1.35,
+        "passes_gate": true,
+        "found": [
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t078",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.01,
+        "passes_gate": true,
+        "found": [
+          "tutorial/cookie-params.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-params.md",
+          "tutorial/cookie-param-models.md",
+          "tutorial/cookie-param-models.md"
+        ]
+      },
+      {
+        "id": "t079",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 1.96,
+        "passes_gate": true,
+        "found": [
+          "tutorial/stream-json-lines.md",
+          "tutorial/stream-json-lines.md",
+          "advanced/path-operation-advanced-configuration.md",
+          "advanced/custom-response.md",
+          "tutorial/stream-json-lines.md"
+        ]
+      },
+      {
+        "id": "t080",
+        "answerable": true,
+        "hit_position": 1,
+        "evidence_position": 1,
+        "best_score": 5.7,
+        "passes_gate": true,
+        "found": [
+          "advanced/response-headers.md",
+          "advanced/response-cookies.md",
+          "advanced/response-change-status-code.md",
+          "advanced/response-change-status-code.md",
+          "tutorial/response-model.md"
+        ]
+      },
+      {
+        "id": "t081",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.16,
+        "passes_gate": false,
+        "found": [
+          "advanced/testing-dependencies.md",
+          "advanced/middleware.md",
+          "tutorial/handling-errors.md",
+          "async.md",
+          "tutorial/query-param-models.md"
+        ]
+      },
+      {
+        "id": "t082",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.21,
+        "passes_gate": false,
+        "found": [
+          "alternatives.md",
+          "alternatives.md",
+          "alternatives.md",
+          "alternatives.md",
+          "alternatives.md"
+        ]
+      },
+      {
+        "id": "t083",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.97,
+        "passes_gate": false,
+        "found": [
+          "history-design-future.md",
+          "tutorial/security/first-steps.md",
+          "release-notes.md",
+          "advanced/custom-response.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t084",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.09,
+        "passes_gate": false,
+        "found": [
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "deployment/concepts.md",
+          "release-notes.md",
+          "tutorial/middleware.md",
+          "tutorial/schema-extra-example.md"
+        ]
+      },
+      {
+        "id": "t085",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.13,
+        "passes_gate": false,
+        "found": [
+          "tutorial/security/index.md",
+          "index.md",
+          "how-to/graphql.md",
+          "deployment/docker.md",
+          "async.md"
+        ]
+      },
+      {
+        "id": "t086",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.09,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "translations.md",
+          "how-to/migrate-from-pydantic-v1-to-pydantic-v2.md",
+          "release-notes.md",
+          "advanced/advanced-dependencies.md"
+        ]
+      },
+      {
+        "id": "t087",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.17,
+        "passes_gate": false,
+        "found": [
+          "release-notes.md",
+          "tutorial/security/oauth2-jwt.md",
+          "history-design-future.md",
+          "how-to/extending-openapi.md",
+          "tutorial/extra-models.md"
+        ]
+      },
+      {
+        "id": "t088",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.22,
+        "passes_gate": false,
+        "found": [
+          "advanced/wsgi.md",
+          "tutorial/response-model.md",
+          "benchmarks.md",
+          "release-notes.md",
+          "tutorial/cookie-param-models.md"
+        ]
+      },
+      {
+        "id": "t089",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -10.43,
+        "passes_gate": false,
+        "found": [
+          "tutorial/extra-data-types.md",
+          "advanced/wsgi.md",
+          "tutorial/handling-errors.md",
+          "advanced/middleware.md",
+          "index.md"
+        ]
+      },
+      {
+        "id": "t090",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -11.17,
+        "passes_gate": false,
+        "found": [
+          "fastapi-cli.md",
+          "tutorial/security/oauth2-jwt.md",
+          "advanced/opentelemetry.md",
+          "translations.md",
+          "how-to/custom-request-and-route.md"
+        ]
+      },
+      {
+        "id": "t091",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -1.05,
+        "passes_gate": true,
+        "found": [
+          "tutorial/background-tasks.md",
+          "release-notes.md",
+          "tutorial/cors.md",
+          "tutorial/background-tasks.md",
+          "fastapi-cli.md"
+        ]
+      },
+      {
+        "id": "t092",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 2.26,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/generate-clients.md",
+          "tutorial/bigger-applications.md",
+          "advanced/opentelemetry.md"
+        ]
+      },
+      {
+        "id": "t093",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 4.38,
+        "passes_gate": true,
+        "found": [
+          "deployment/concepts.md",
+          "tutorial/sql-databases.md",
+          "deployment/concepts.md",
+          "deployment/docker.md",
+          "advanced/events.md"
+        ]
+      },
+      {
+        "id": "t094",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 3.73,
+        "passes_gate": true,
+        "found": [
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "advanced/opentelemetry.md",
+          "release-notes.md",
+          "advanced/opentelemetry.md"
+        ]
+      },
+      {
+        "id": "t095",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -0.84,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "tutorial/testing.md",
+          "advanced/async-tests.md",
+          "release-notes.md",
+          "tutorial/testing.md"
+        ]
+      },
+      {
+        "id": "t096",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -2.37,
+        "passes_gate": true,
+        "found": [
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "deployment/server-workers.md",
+          "fastapi-cli.md",
+          "deployment/docker.md"
+        ]
+      },
+      {
+        "id": "t097",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -3.21,
+        "passes_gate": true,
+        "found": [
+          "tutorial/sql-databases.md",
+          "release-notes.md",
+          "tutorial/sql-databases.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      },
+      {
+        "id": "t098",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -1.59,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "advanced/behind-a-proxy.md",
+          "tutorial/bigger-applications.md",
+          "advanced/behind-a-proxy.md"
+        ]
+      },
+      {
+        "id": "t099",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": 1.01,
+        "passes_gate": true,
+        "found": [
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/oauth2-jwt.md",
+          "tutorial/security/simple-oauth2.md"
+        ]
+      },
+      {
+        "id": "t100",
+        "answerable": false,
+        "hit_position": null,
+        "evidence_position": null,
+        "best_score": -4.4,
+        "passes_gate": true,
+        "found": [
+          "release-notes.md",
+          "release-notes.md",
+          "advanced/websockets.md",
+          "release-notes.md",
+          "release-notes.md"
+        ]
+      }
+    ]
+  }
+}

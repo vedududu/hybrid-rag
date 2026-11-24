@@ -3,6 +3,8 @@
     "summary": {
       "hit_rate": 0.85,
       "mrr": 0.7041666666666667,
+      "chunk_hit_rate": 0.475,
+      "chunk_mrr": 0.31124999999999997,
       "gate_passed_answerable": 1.0,
       "gate_blocked_unanswerable": 0.5,
       "missed": [
@@ -12,6 +14,29 @@
         "q31",
         "q38",
         "q39"
+      ],
+      "chunk_missed": [
+        "q01",
+        "q02",
+        "q03",
+        "q04",
+        "q05",
+        "q09",
+        "q11",
+        "q12",
+        "q16",
+        "q17",
+        "q18",
+        "q23",
+        "q24",
+        "q26",
+        "q27",
+        "q31",
+        "q34",
+        "q35",
+        "q37",
+        "q38",
+        "q39"
       ]
     },
     "questions": [
@@ -19,6 +44,7 @@
         "id": "q01",
         "answerable": true,
         "hit_position": 4,
+        "evidence_position": null,
         "best_score": 4.41,
         "passes_gate": true,
         "found": [
@@ -33,6 +59,7 @@
         "id": "q02",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 5.02,
         "passes_gate": true,
         "found": [
@@ -47,6 +74,7 @@
         "id": "q03",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 1.38,
         "passes_gate": true,
         "found": [
@@ -61,6 +89,7 @@
         "id": "q04",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 7.69,
         "passes_gate": true,
         "found": [
@@ -75,6 +104,7 @@
         "id": "q05",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": -2.81,
         "passes_gate": true,
         "found": [
@@ -89,6 +119,7 @@
         "id": "q06",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 5.14,
         "passes_gate": true,
         "found": [
@@ -103,6 +134,7 @@
         "id": "q07",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": 3,
         "best_score": 5.33,
         "passes_gate": true,
         "found": [
@@ -117,6 +149,7 @@
         "id": "q08",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": 2,
         "best_score": 1.83,
         "passes_gate": true,
         "found": [
@@ -131,6 +164,7 @@
         "id": "q09",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 1.46,
         "passes_gate": true,
         "found": [
@@ -145,6 +179,7 @@
         "id": "q10",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 2.83,
         "passes_gate": true,
         "found": [
@@ -159,6 +194,7 @@
         "id": "q11",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": null,
         "best_score": -4.17,
         "passes_gate": true,
         "found": [
@@ -173,6 +209,7 @@
         "id": "q12",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 7.37,
         "passes_gate": true,
         "found": [
@@ -187,6 +224,7 @@
         "id": "q13",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": -3.37,
         "passes_gate": true,
         "found": [
@@ -201,6 +239,7 @@
         "id": "q14",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 4.77,
         "passes_gate": true,
         "found": [
@@ -215,6 +254,7 @@
         "id": "q15",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 2.54,
         "passes_gate": true,
         "found": [
@@ -229,6 +269,7 @@
         "id": "q16",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -2.44,
         "passes_gate": true,
         "found": [
@@ -243,6 +284,7 @@
         "id": "q17",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 5.46,
         "passes_gate": true,
         "found": [
@@ -257,6 +299,7 @@
         "id": "q18",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": -0.96,
         "passes_gate": true,
         "found": [
@@ -271,6 +314,7 @@
         "id": "q19",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 2,
         "best_score": 8.0,
         "passes_gate": true,
         "found": [
@@ -285,6 +329,7 @@
         "id": "q20",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 3.17,
         "passes_gate": true,
         "found": [
@@ -299,6 +344,7 @@
         "id": "q21",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 5.72,
         "passes_gate": true,
         "found": [
@@ -313,6 +359,7 @@
         "id": "q22",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 2,
         "best_score": 3.29,
         "passes_gate": true,
         "found": [
@@ -327,6 +374,7 @@
         "id": "q23",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 3.6,
         "passes_gate": true,
         "found": [
@@ -341,6 +389,7 @@
         "id": "q24",
         "answerable": true,
         "hit_position": 4,
+        "evidence_position": null,
         "best_score": 5.63,
         "passes_gate": true,
         "found": [
@@ -355,6 +404,7 @@
         "id": "q25",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 8.1,
         "passes_gate": true,
         "found": [
@@ -369,6 +419,7 @@
         "id": "q26",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": -1.07,
         "passes_gate": true,
         "found": [
@@ -383,6 +434,7 @@
         "id": "q27",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 3.64,
         "passes_gate": true,
         "found": [
@@ -397,6 +449,7 @@
         "id": "q28",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 4.72,
         "passes_gate": true,
         "found": [
@@ -411,6 +464,7 @@
         "id": "q29",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 6.34,
         "passes_gate": true,
         "found": [
@@ -425,6 +479,7 @@
         "id": "q30",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 3.3,
         "passes_gate": true,
         "found": [
@@ -439,6 +494,7 @@
         "id": "q31",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 5.56,
         "passes_gate": true,
         "found": [
@@ -453,6 +509,7 @@
         "id": "q32",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 6.79,
         "passes_gate": true,
         "found": [
@@ -467,6 +524,7 @@
         "id": "q33",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": 5,
         "best_score": 2.27,
         "passes_gate": true,
         "found": [
@@ -481,6 +539,7 @@
         "id": "q34",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": -3.74,
         "passes_gate": true,
         "found": [
@@ -495,6 +554,7 @@
         "id": "q35",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 4.4,
         "passes_gate": true,
         "found": [
@@ -509,6 +569,7 @@
         "id": "q36",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 3.99,
         "passes_gate": true,
         "found": [
@@ -523,6 +584,7 @@
         "id": "q37",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 5.11,
         "passes_gate": true,
         "found": [
@@ -537,6 +599,7 @@
         "id": "q38",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 5.53,
         "passes_gate": true,
         "found": [
@@ -551,6 +614,7 @@
         "id": "q39",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 0.45,
         "passes_gate": true,
         "found": [
@@ -565,6 +629,7 @@
         "id": "q40",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 4.05,
         "passes_gate": true,
         "found": [
@@ -579,6 +644,7 @@
         "id": "q41",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.1,
         "passes_gate": false,
         "found": [
@@ -593,6 +659,7 @@
         "id": "q42",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.23,
         "passes_gate": false,
         "found": [
@@ -607,6 +674,7 @@
         "id": "q43",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.11,
         "passes_gate": false,
         "found": [
@@ -621,6 +689,7 @@
         "id": "q44",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -10.91,
         "passes_gate": false,
         "found": [
@@ -635,6 +704,7 @@
         "id": "q45",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.22,
         "passes_gate": false,
         "found": [
@@ -649,6 +719,7 @@
         "id": "q46",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -1.2,
         "passes_gate": true,
         "found": [
@@ -663,6 +734,7 @@
         "id": "q47",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 1.72,
         "passes_gate": true,
         "found": [
@@ -677,6 +749,7 @@
         "id": "q48",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 4.37,
         "passes_gate": true,
         "found": [
@@ -691,6 +764,7 @@
         "id": "q49",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 2.62,
         "passes_gate": true,
         "found": [
@@ -705,6 +779,7 @@
         "id": "q50",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 1.67,
         "passes_gate": true,
         "found": [
@@ -721,6 +796,8 @@
     "summary": {
       "hit_rate": 0.85,
       "mrr": 0.705,
+      "chunk_hit_rate": 0.425,
+      "chunk_mrr": 0.2129166666666667,
       "gate_passed_answerable": 1.0,
       "gate_blocked_unanswerable": 0.5,
       "missed": [
@@ -730,6 +807,31 @@
         "q16",
         "q27",
         "q38"
+      ],
+      "chunk_missed": [
+        "q01",
+        "q03",
+        "q04",
+        "q05",
+        "q06",
+        "q08",
+        "q09",
+        "q10",
+        "q11",
+        "q12",
+        "q14",
+        "q15",
+        "q16",
+        "q17",
+        "q18",
+        "q22",
+        "q26",
+        "q27",
+        "q33",
+        "q34",
+        "q35",
+        "q38",
+        "q39"
       ]
     },
     "questions": [
@@ -737,6 +839,7 @@
         "id": "q01",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 4.58,
         "passes_gate": true,
         "found": [
@@ -751,6 +854,7 @@
         "id": "q02",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 5.58,
         "passes_gate": true,
         "found": [
@@ -765,6 +869,7 @@
         "id": "q03",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 2.18,
         "passes_gate": true,
         "found": [
@@ -779,6 +884,7 @@
         "id": "q04",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 6.35,
         "passes_gate": true,
         "found": [
@@ -793,6 +899,7 @@
         "id": "q05",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": -2.53,
         "passes_gate": true,
         "found": [
@@ -807,6 +914,7 @@
         "id": "q06",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 3.24,
         "passes_gate": true,
         "found": [
@@ -821,6 +929,7 @@
         "id": "q07",
         "answerable": true,
         "hit_position": 4,
+        "evidence_position": 4,
         "best_score": 5.71,
         "passes_gate": true,
         "found": [
@@ -835,6 +944,7 @@
         "id": "q08",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 2.39,
         "passes_gate": true,
         "found": [
@@ -849,6 +959,7 @@
         "id": "q09",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": null,
         "best_score": 1.46,
         "passes_gate": true,
         "found": [
@@ -863,6 +974,7 @@
         "id": "q10",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 2.5,
         "passes_gate": true,
         "found": [
@@ -877,6 +989,7 @@
         "id": "q11",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -2.53,
         "passes_gate": true,
         "found": [
@@ -891,6 +1004,7 @@
         "id": "q12",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 7.37,
         "passes_gate": true,
         "found": [
@@ -905,6 +1019,7 @@
         "id": "q13",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": -3.08,
         "passes_gate": true,
         "found": [
@@ -919,6 +1034,7 @@
         "id": "q14",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 3.92,
         "passes_gate": true,
         "found": [
@@ -933,6 +1049,7 @@
         "id": "q15",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 1.6,
         "passes_gate": true,
         "found": [
@@ -947,6 +1064,7 @@
         "id": "q16",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -2.44,
         "passes_gate": true,
         "found": [
@@ -961,6 +1079,7 @@
         "id": "q17",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 5.17,
         "passes_gate": true,
         "found": [
@@ -975,6 +1094,7 @@
         "id": "q18",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 0.91,
         "passes_gate": true,
         "found": [
@@ -989,6 +1109,7 @@
         "id": "q19",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 8.0,
         "passes_gate": true,
         "found": [
@@ -1003,6 +1124,7 @@
         "id": "q20",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 2.93,
         "passes_gate": true,
         "found": [
@@ -1017,6 +1139,7 @@
         "id": "q21",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 5.69,
         "passes_gate": true,
         "found": [
@@ -1031,6 +1154,7 @@
         "id": "q22",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 2.93,
         "passes_gate": true,
         "found": [
@@ -1045,6 +1169,7 @@
         "id": "q23",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 5,
         "best_score": 1.61,
         "passes_gate": true,
         "found": [
@@ -1059,6 +1184,7 @@
         "id": "q24",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 6.48,
         "passes_gate": true,
         "found": [
@@ -1073,6 +1199,7 @@
         "id": "q25",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 8.1,
         "passes_gate": true,
         "found": [
@@ -1087,6 +1214,7 @@
         "id": "q26",
         "answerable": true,
         "hit_position": 4,
+        "evidence_position": null,
         "best_score": -0.71,
         "passes_gate": true,
         "found": [
@@ -1101,6 +1229,7 @@
         "id": "q27",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 3.67,
         "passes_gate": true,
         "found": [
@@ -1115,6 +1244,7 @@
         "id": "q28",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 6.89,
         "passes_gate": true,
         "found": [
@@ -1129,6 +1259,7 @@
         "id": "q29",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 2,
         "best_score": 6.73,
         "passes_gate": true,
         "found": [
@@ -1143,6 +1274,7 @@
         "id": "q30",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 5,
         "best_score": 3.46,
         "passes_gate": true,
         "found": [
@@ -1157,6 +1289,7 @@
         "id": "q31",
         "answerable": true,
         "hit_position": 5,
+        "evidence_position": 5,
         "best_score": 5.58,
         "passes_gate": true,
         "found": [
@@ -1171,6 +1304,7 @@
         "id": "q32",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 8.19,
         "passes_gate": true,
         "found": [
@@ -1185,6 +1319,7 @@
         "id": "q33",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": null,
         "best_score": 3.47,
         "passes_gate": true,
         "found": [
@@ -1199,6 +1334,7 @@
         "id": "q34",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": -5.14,
         "passes_gate": true,
         "found": [
@@ -1213,6 +1349,7 @@
         "id": "q35",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 4.64,
         "passes_gate": true,
         "found": [
@@ -1227,6 +1364,7 @@
         "id": "q36",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 2,
         "best_score": 3.99,
         "passes_gate": true,
         "found": [
@@ -1241,6 +1379,7 @@
         "id": "q37",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 6.33,
         "passes_gate": true,
         "found": [
@@ -1255,6 +1394,7 @@
         "id": "q38",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 5.82,
         "passes_gate": true,
         "found": [
@@ -1269,6 +1409,7 @@
         "id": "q39",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": null,
         "best_score": -0.09,
         "passes_gate": true,
         "found": [
@@ -1283,6 +1424,7 @@
         "id": "q40",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 5.89,
         "passes_gate": true,
         "found": [
@@ -1297,6 +1439,7 @@
         "id": "q41",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.04,
         "passes_gate": false,
         "found": [
@@ -1311,6 +1454,7 @@
         "id": "q42",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.23,
         "passes_gate": false,
         "found": [
@@ -1325,6 +1469,7 @@
         "id": "q43",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.11,
         "passes_gate": false,
         "found": [
@@ -1339,6 +1484,7 @@
         "id": "q44",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -10.87,
         "passes_gate": false,
         "found": [
@@ -1353,6 +1499,7 @@
         "id": "q45",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.1,
         "passes_gate": false,
         "found": [
@@ -1367,6 +1514,7 @@
         "id": "q46",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 0.84,
         "passes_gate": true,
         "found": [
@@ -1381,6 +1529,7 @@
         "id": "q47",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 2.06,
         "passes_gate": true,
         "found": [
@@ -1395,6 +1544,7 @@
         "id": "q48",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 4.18,
         "passes_gate": true,
         "found": [
@@ -1409,6 +1559,7 @@
         "id": "q49",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 2.62,
         "passes_gate": true,
         "found": [
@@ -1423,6 +1574,7 @@
         "id": "q50",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 1.06,
         "passes_gate": true,
         "found": [
@@ -1439,6 +1591,8 @@
     "summary": {
       "hit_rate": 0.825,
       "mrr": 0.6625,
+      "chunk_hit_rate": 0.4,
+      "chunk_mrr": 0.21291666666666664,
       "gate_passed_answerable": 1.0,
       "gate_blocked_unanswerable": 0.5,
       "missed": [
@@ -1449,6 +1603,32 @@
         "q31",
         "q38",
         "q39"
+      ],
+      "chunk_missed": [
+        "q01",
+        "q02",
+        "q04",
+        "q05",
+        "q08",
+        "q09",
+        "q10",
+        "q11",
+        "q12",
+        "q13",
+        "q14",
+        "q15",
+        "q16",
+        "q17",
+        "q18",
+        "q23",
+        "q24",
+        "q26",
+        "q27",
+        "q31",
+        "q32",
+        "q34",
+        "q38",
+        "q39"
       ]
     },
     "questions": [
@@ -1456,6 +1636,7 @@
         "id": "q01",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 4.75,
         "passes_gate": true,
         "found": [
@@ -1470,6 +1651,7 @@
         "id": "q02",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": null,
         "best_score": 3.52,
         "passes_gate": true,
         "found": [
@@ -1484,6 +1666,7 @@
         "id": "q03",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": 3,
         "best_score": -0.01,
         "passes_gate": true,
         "found": [
@@ -1498,6 +1681,7 @@
         "id": "q04",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 7.16,
         "passes_gate": true,
         "found": [
@@ -1512,6 +1696,7 @@
         "id": "q05",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": -1.84,
         "passes_gate": true,
         "found": [
@@ -1526,6 +1711,7 @@
         "id": "q06",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 4.34,
         "passes_gate": true,
         "found": [
@@ -1540,6 +1726,7 @@
         "id": "q07",
         "answerable": true,
         "hit_position": 4,
+        "evidence_position": 5,
         "best_score": 5.53,
         "passes_gate": true,
         "found": [
@@ -1554,6 +1741,7 @@
         "id": "q08",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 1.19,
         "passes_gate": true,
         "found": [
@@ -1568,6 +1756,7 @@
         "id": "q09",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": 2.15,
         "passes_gate": true,
         "found": [
@@ -1582,6 +1771,7 @@
         "id": "q10",
         "answerable": true,
         "hit_position": 4,
+        "evidence_position": null,
         "best_score": 1.9,
         "passes_gate": true,
         "found": [
@@ -1596,6 +1786,7 @@
         "id": "q11",
         "answerable": true,
         "hit_position": 3,
+        "evidence_position": null,
         "best_score": -4.17,
         "passes_gate": true,
         "found": [
@@ -1610,6 +1801,7 @@
         "id": "q12",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 7.52,
         "passes_gate": true,
         "found": [
@@ -1624,6 +1816,7 @@
         "id": "q13",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": -3.08,
         "passes_gate": true,
         "found": [
@@ -1638,6 +1831,7 @@
         "id": "q14",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 4.92,
         "passes_gate": true,
         "found": [
@@ -1652,6 +1846,7 @@
         "id": "q15",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 2.62,
         "passes_gate": true,
         "found": [
@@ -1666,6 +1861,7 @@
         "id": "q16",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -2.44,
         "passes_gate": true,
         "found": [
@@ -1680,6 +1876,7 @@
         "id": "q17",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 5.46,
         "passes_gate": true,
         "found": [
@@ -1694,6 +1891,7 @@
         "id": "q18",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 0.91,
         "passes_gate": true,
         "found": [
@@ -1708,6 +1906,7 @@
         "id": "q19",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 5,
         "best_score": 8.0,
         "passes_gate": true,
         "found": [
@@ -1722,6 +1921,7 @@
         "id": "q20",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 4.63,
         "passes_gate": true,
         "found": [
@@ -1736,6 +1936,7 @@
         "id": "q21",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 5.72,
         "passes_gate": true,
         "found": [
@@ -1750,6 +1951,7 @@
         "id": "q22",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 2,
         "best_score": 3.56,
         "passes_gate": true,
         "found": [
@@ -1764,6 +1966,7 @@
         "id": "q23",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 2.51,
         "passes_gate": true,
         "found": [
@@ -1778,6 +1981,7 @@
         "id": "q24",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 6.48,
         "passes_gate": true,
         "found": [
@@ -1792,6 +1996,7 @@
         "id": "q25",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 8.1,
         "passes_gate": true,
         "found": [
@@ -1806,6 +2011,7 @@
         "id": "q26",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": -0.95,
         "passes_gate": true,
         "found": [
@@ -1820,6 +2026,7 @@
         "id": "q27",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 3.04,
         "passes_gate": true,
         "found": [
@@ -1834,6 +2041,7 @@
         "id": "q28",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 3,
         "best_score": 5.77,
         "passes_gate": true,
         "found": [
@@ -1848,6 +2056,7 @@
         "id": "q29",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 6.76,
         "passes_gate": true,
         "found": [
@@ -1862,6 +2071,7 @@
         "id": "q30",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 5,
         "best_score": 3.64,
         "passes_gate": true,
         "found": [
@@ -1876,6 +2086,7 @@
         "id": "q31",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 4.42,
         "passes_gate": true,
         "found": [
@@ -1890,6 +2101,7 @@
         "id": "q32",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": null,
         "best_score": 7.56,
         "passes_gate": true,
         "found": [
@@ -1904,6 +2116,7 @@
         "id": "q33",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 4,
         "best_score": 2.26,
         "passes_gate": true,
         "found": [
@@ -1918,6 +2131,7 @@
         "id": "q34",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": null,
         "best_score": -5.3,
         "passes_gate": true,
         "found": [
@@ -1932,6 +2146,7 @@
         "id": "q35",
         "answerable": true,
         "hit_position": 2,
+        "evidence_position": 3,
         "best_score": 3.69,
         "passes_gate": true,
         "found": [
@@ -1946,6 +2161,7 @@
         "id": "q36",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 2,
         "best_score": 3.98,
         "passes_gate": true,
         "found": [
@@ -1960,6 +2176,7 @@
         "id": "q37",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 6.09,
         "passes_gate": true,
         "found": [
@@ -1974,6 +2191,7 @@
         "id": "q38",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 6.06,
         "passes_gate": true,
         "found": [
@@ -1988,6 +2206,7 @@
         "id": "q39",
         "answerable": true,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 1.69,
         "passes_gate": true,
         "found": [
@@ -2002,6 +2221,7 @@
         "id": "q40",
         "answerable": true,
         "hit_position": 1,
+        "evidence_position": 1,
         "best_score": 3.89,
         "passes_gate": true,
         "found": [
@@ -2016,6 +2236,7 @@
         "id": "q41",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.1,
         "passes_gate": false,
         "found": [
@@ -2030,6 +2251,7 @@
         "id": "q42",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.24,
         "passes_gate": false,
         "found": [
@@ -2044,6 +2266,7 @@
         "id": "q43",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.09,
         "passes_gate": false,
         "found": [
@@ -2058,6 +2281,7 @@
         "id": "q44",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.12,
         "passes_gate": false,
         "found": [
@@ -2072,6 +2296,7 @@
         "id": "q45",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -11.07,
         "passes_gate": false,
         "found": [
@@ -2086,6 +2311,7 @@
         "id": "q46",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": -1.51,
         "passes_gate": true,
         "found": [
@@ -2100,6 +2326,7 @@
         "id": "q47",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 2.42,
         "passes_gate": true,
         "found": [
@@ -2114,6 +2341,7 @@
         "id": "q48",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 4.57,
         "passes_gate": true,
         "found": [
@@ -2128,6 +2356,7 @@
         "id": "q49",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 2.62,
         "passes_gate": true,
         "found": [
@@ -2142,6 +2371,7 @@
         "id": "q50",
         "answerable": false,
         "hit_position": null,
+        "evidence_position": null,
         "best_score": 1.89,
         "passes_gate": true,
         "found": [
