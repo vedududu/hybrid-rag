@@ -1,12 +1,13 @@
-"""Web page for the Hybrid RAG system.
+"""Web page for the Hybrid RAG system – a chat over the FastAPI docs.
 
 Two ways to run:
 - API mode (default, local + Docker): the page only displays things; it sends questions to the FastAPI service
   and shows its progress updates live (POST /ask/stream).
 - Direct mode (RAG_DIRECT=1, used on Streamlit Community Cloud): there is no separate API there,
-  so the page runs the same ask() pipeline itself.
+  so the page runs the same pipeline itself.
 """
 import hashlib
+import html
 import json
 import os
 import re
@@ -35,49 +36,150 @@ API_URL = os.getenv("API_URL", "http://localhost:8000")
 DIRECT_MODE = os.getenv("RAG_DIRECT") == "1"
 DAILY_LIMIT = int(os.getenv("DAILY_LIMIT", "150"))  # protects the free Groq allowance on a public demo
 DOCS_SITE = "https://fastapi.tiangolo.com/"
-THINKING_SHOWN = 400   # how many characters of the AI's live thinking to show at once
+GITHUB_URL = "https://github.com/vedududu/hybrid-rag"
+MAX_TURNS = 20          # how many questions the chat keeps on screen
+THINKING_SHOWN = 260    # how many characters of the AI's live thinking to show at once
 THINKING_PAUSE = 0.012  # seconds between thinking pieces (Groq sends them almost instantly; this is only for show)
 TYPING_PAUSE = 0.025    # seconds between answer pieces, so the answer is typed out instead of flashing in
 
 EXAMPLES = [
-    "How do I return a 201 status for a create endpoint?",
-    "How do I add CORS to my app?",
-    "How do I run code when the app starts up?",
-    "How do I roast a chicken?",
+    ("⚡", "How do I return a 201 status for a create endpoint?"),
+    ("🌐", "How do I add CORS to my app?"),
+    ("🚀", "How do I run code when the app starts up?"),
+    ("🍗", "How do I roast a chicken?"),
 ]
-
+HEADLINE_STATS = [("93%", "correct on a 100-question held-out exam"), ("20/20", "honest “I don't know”"),
+                  ("~8 s", "per answer")]
+STEPS = [("search", "Search", "meaning + keywords"), ("rerank", "Rerank", "best 5 passages"),
+         ("gate", "Gate", "relevant enough?"), ("think", "Think", "AI reads sources"),
+         ("write", "Write", "with citations"), ("check", "Fact-check", "every claim")]
 LEVELS = {
-    "high": ("HIGH", "#16A34A", "All or nearly all claims were confirmed in the sources."),
-    "medium": ("MEDIUM", "#D97706", "Most claims were confirmed; check the sources for the rest."),
-    "low": ("LOW", "#DC2626", "Few claims could be confirmed – treat this answer with care."),
-    "none": ("NO ANSWER", "#6B7280", ""),
+    "high": ("HIGH", "#B8F34A", "All or nearly all claims were confirmed in the sources."),
+    "medium": ("MEDIUM", "#FFB020", "Most claims were confirmed – check the sources for the rest."),
+    "low": ("LOW", "#FF5A5F", "Few claims could be confirmed – treat this answer with care."),
+    "none": ("NO ANSWER", "#8B93A1", ""),
 }
-
 REASONS = {
     "gate": "None of the documentation looked relevant enough, so no AI was asked (the Gate).",
     "writer": "The AI read the most relevant documentation and found that it doesn't contain the answer.",
 }
+CITATION = re.compile(r"【(\d+)(?:†[^】]*)?】")
 
-st.set_page_config(page_title="Ask the FastAPI docs", page_icon="📘", layout="centered")
+st.set_page_config(page_title="Ask the FastAPI docs", page_icon="📘", layout="centered",
+                   initial_sidebar_state="expanded")
 
-st.markdown(
-    """
-    <style>
-    .hero {
-        padding: 1.6rem 1.8rem; border-radius: 16px; margin-bottom: 1.2rem; color: white;
-        background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 55%, #0D9488 100%);
-    }
-    .hero h1 { color: white; margin: 0; padding: 0; font-size: 2.1rem; }
-    .hero p { margin: 0.35rem 0 0 0; opacity: 0.9; font-size: 1rem; }
-    .badge {
-        display: inline-block; padding: 0.25rem 0.8rem; border-radius: 999px; color: white;
-        font-weight: 700; font-size: 0.85rem; letter-spacing: 0.04em;
-    }
-    .badge-note { opacity: 0.75; font-size: 0.85rem; margin-left: 0.6rem; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+:root { --lime:#B8F34A; --lime-soft:rgba(184,243,74,.14); --orange:#FF8A3D; --card:#101318; --line:#232831;
+        --muted:#8B93A1; --mono:'JetBrains Mono', ui-monospace, monospace; --head:'Space Grotesk', sans-serif; }
+.stApp { background: radial-gradient(900px 420px at 8% -8%, rgba(184,243,74,.10), transparent 60%),
+                     radial-gradient(700px 380px at 105% 10%, rgba(255,138,61,.07), transparent 60%), #07080A; }
+[data-testid="stSidebar"] { background:#0B0D10; border-right:1px solid var(--line); }
+.block-container { padding-top: 4.6rem; }
+
+/* ---------- header ---------- */
+.eyebrow { font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; color:var(--muted); text-transform:uppercase; }
+.eyebrow:after { content:""; display:block; width:48px; height:2px; background:var(--lime); margin-top:.55rem;
+                 box-shadow:0 0 10px var(--lime); }
+.title { font-family:var(--head); font-weight:700; font-size:3.1rem; line-height:1.02; margin:.9rem 0 .2rem 0; color:#F2F4F7; }
+.title span { color:var(--lime); text-shadow:0 0 28px rgba(184,243,74,.45); }
+.title.small { font-size:1.65rem; margin:.4rem 0 .6rem 0; }
+.subtitle { font-family:var(--head); font-size:1.35rem; color:var(--orange); font-weight:700; margin-bottom:.9rem; }
+.chips { display:flex; flex-wrap:wrap; gap:.5rem; margin:.4rem 0 1.1rem 0; }
+.chip { font-family:var(--mono); font-size:.78rem; color:#D7DBE2; border:1px solid var(--line); background:var(--card);
+        padding:.32rem .7rem; border-radius:999px; }
+.chip b { color:var(--lime); font-weight:600; }
+.stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:.7rem; margin:.3rem 0 1.4rem 0; }
+.stat { border:1px solid var(--line); background:var(--card); border-radius:14px; padding:.8rem .9rem; }
+.stat .n { font-family:var(--head); font-size:1.6rem; font-weight:700; color:var(--lime); }
+.stat .l { font-family:var(--mono); font-size:.72rem; color:var(--muted); }
+.label { font-family:var(--mono); font-size:.72rem; letter-spacing:.18em; color:var(--muted); text-transform:uppercase;
+         margin:.4rem 0 .5rem 0; }
+
+/* ---------- example buttons ---------- */
+div[data-testid="stButton"] button { border-radius:12px; border:1px solid var(--line); background:var(--card);
+    text-align:left; justify-content:flex-start; }
+div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:0 0 16px rgba(184,243,74,.18); }
+
+/* ---------- chat bubbles ---------- */
+[data-testid="stChatMessage"] { background:var(--card); border:1px solid var(--line); border-radius:18px;
+    padding:.9rem 1rem; margin-bottom:.8rem; }
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) { flex-direction:row-reverse;
+    background:#171B21; width:fit-content; max-width:80%; margin-left:auto; border-color:rgba(184,243,74,.22); }
+[data-testid="stChatMessageAvatarUser"] { background:var(--lime) !important; color:#07080A !important; }
+[data-testid="stChatMessageAvatarCustom"] { background:#1A1F27 !important; border:1px solid rgba(184,243,74,.35); }
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stChatMessageContent"] {
+    text-align:right; }
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarCustom"]) {
+    border-color:rgba(184,243,74,.28); box-shadow:0 0 30px rgba(184,243,74,.05); }
+[data-testid="stChatInput"] { border:1px solid rgba(184,243,74,.35) !important; border-radius:14px !important;
+    box-shadow:0 0 22px rgba(184,243,74,.10); }
+
+/* ---------- pipeline tracker ---------- */
+.pipe { display:grid; grid-template-columns:repeat(6, 1fr); gap:.4rem; margin:.2rem 0 .8rem 0; }
+.step { border:1px solid var(--line); border-radius:10px; padding:.42rem .45rem; background:#0C0E12; min-width:0; }
+.step .t { font-family:var(--mono); font-size:.72rem; font-weight:600; color:var(--muted); white-space:nowrap; }
+.step .s { font-family:var(--mono); font-size:.62rem; color:#5E6673; line-height:1.25; }
+.step.done { border-color:rgba(184,243,74,.45); }
+.step.done .t { color:var(--lime); }
+.step.active { border-color:var(--lime); box-shadow:0 0 14px rgba(184,243,74,.35); animation:pulse 1.1s ease-in-out infinite; }
+.step.active .t { color:#F2F4F7; }
+.step.stop { border-color:var(--orange); } .step.stop .t { color:var(--orange); }
+.step.skip { opacity:.35; }
+@keyframes pulse { 0%,100% { box-shadow:0 0 6px rgba(184,243,74,.25);} 50% { box-shadow:0 0 18px rgba(184,243,74,.6);} }
+
+/* ---------- streaming placeholder ---------- */
+.stream-label { font-family:var(--mono); font-size:.75rem; color:var(--lime); margin:.2rem 0 .45rem 0; }
+.bar { height:7px; border-radius:6px; margin:.42rem 0; background:linear-gradient(90deg, rgba(184,243,74,.10),
+       rgba(184,243,74,.55), rgba(184,243,74,.10)); background-size:200% 100%; animation:shimmer 1.4s linear infinite; }
+@keyframes shimmer { from { background-position:200% 0; } to { background-position:-200% 0; } }
+.thought { font-family:var(--mono); font-size:.74rem; color:#6F7886; margin-top:.5rem; line-height:1.45; }
+
+/* ---------- answer header ---------- */
+.ahead { display:flex; align-items:center; gap:.9rem; margin-bottom:.6rem; }
+.ring { width:58px; height:58px; border-radius:50%; display:grid; place-items:center; flex:none; }
+.ring div { width:46px; height:46px; border-radius:50%; background:var(--card); display:grid; place-items:center;
+            font-family:var(--mono); font-size:.8rem; font-weight:600; }
+.level { font-family:var(--mono); font-size:.78rem; font-weight:600; letter-spacing:.12em; }
+.note { font-size:.85rem; color:var(--muted); }
+.meta { font-family:var(--mono); font-size:.72rem; color:var(--muted); margin-top:.15rem; }
+.meta b { color:var(--lime); font-weight:600; }
+
+/* ---------- sources + claims ---------- */
+.srcs { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:.5rem; margin:.3rem 0 .4rem 0; }
+.src { display:block; border:1px solid var(--line); border-radius:12px; padding:.55rem .7rem; background:#0C0E12;
+       text-decoration:none !important; transition:all .15s; }
+.src:hover { border-color:var(--lime); box-shadow:0 0 14px rgba(184,243,74,.2); }
+.src .num { font-family:var(--mono); font-size:.68rem; color:#07080A; background:var(--lime); border-radius:6px;
+            padding:.05rem .38rem; margin-right:.45rem; font-weight:600; }
+.src .name { font-family:var(--mono); font-size:.8rem; color:#E8EAED; }
+.src .go { font-family:var(--mono); font-size:.66rem; color:var(--muted); margin-top:.25rem; }
+.claim { border-left:3px solid; border-radius:8px; padding:.4rem .65rem; margin:.35rem 0; background:#0C0E12; font-size:.86rem; }
+.claim.ok { border-color:var(--lime); } .claim.bad { border-color:#FF5A5F; }
+.claim small { font-family:var(--mono); color:var(--muted); }
+.refusal { border:1px solid rgba(255,138,61,.45); border-radius:14px; padding:.8rem 1rem; background:rgba(255,138,61,.06); }
+.refusal b { color:var(--orange); font-family:var(--head); font-size:1.05rem; }
+.errorcard { border:1px solid rgba(255,90,95,.5); border-radius:14px; padding:.7rem 1rem; background:rgba(255,90,95,.07); }
+
+/* ---------- sidebar ---------- */
+.brand { font-family:var(--head); font-weight:700; font-size:1.15rem; color:#F2F4F7; }
+.status { font-family:var(--mono); font-size:.72rem; color:var(--muted); margin:.3rem 0 1rem 0; }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.4rem; }
+.dot.on { background:var(--lime); box-shadow:0 0 8px var(--lime); } .dot.off { background:#FF5A5F; }
+.arch { border:1px dashed var(--line); border-radius:14px; padding:.7rem; }
+.node { border:1px solid var(--line); border-radius:10px; padding:.38rem .55rem; background:#101318;
+        font-family:var(--mono); font-size:.72rem; color:#D7DBE2; }
+.node small { color:var(--muted); display:block; font-size:.62rem; }
+.arrow { text-align:center; color:var(--lime); font-size:.8rem; line-height:1.1; text-shadow:0 0 6px var(--lime); }
+.mini { display:grid; grid-template-columns:1fr 1fr; gap:.45rem; }
+.mini div { border:1px solid var(--line); border-radius:10px; padding:.45rem .55rem; background:#101318; }
+.mini b { font-family:var(--head); color:var(--lime); font-size:1.1rem; display:block; }
+.mini span { font-family:var(--mono); font-size:.62rem; color:var(--muted); }
+.footer { font-family:var(--mono); font-size:.7rem; color:#5E6673; text-align:center; margin:1.2rem 0 .4rem 0; }
+.footer a { color:var(--muted); }
+</style>
+""", unsafe_allow_html=True)
 
 
 # ---------- talking to the API ----------
@@ -135,41 +237,110 @@ def explain_error(error):
     return f"Something went wrong while answering ({type(error).__name__}). Please try again."
 
 
-def answer_with_live_progress(question):
-    """Show each stage and the answer text as they arrive. Returns (result, error_message)."""
+# ---------- the pipeline tracker ----------
+def tracker_html(states, notes):
+    """The six pipeline steps as glowing tiles: todo / active / done / stop / skip."""
+    tiles = []
+    for key, name, hint in STEPS:
+        mark = {"done": "✓ ", "stop": "■ ", "active": "● "}.get(states[key], "")
+        tiles.append(f'<div class="step {states[key]}"><div class="t">{mark}{name}</div>'
+                     f'<div class="s">{html.escape(notes.get(key, hint))}</div></div>')
+    return '<div class="pipe">' + "".join(tiles) + "</div>"
+
+
+def tracker_for_result(result):
+    """A finished tracker for an answer in the chat history, using the timings the pipeline measured."""
+    seconds = (result.get("stats") or {}).get("seconds", {})
+    states = {key: "done" for key, _, _ in STEPS}
+    notes = {}
+    if "search" in seconds:
+        notes["search"] = f"{seconds['search']:.1f} s"
+    if "writer" in seconds:
+        notes["write"] = f"{seconds['writer']:.1f} s"
+    if "judge" in seconds:
+        notes["check"] = f"{seconds['judge']:.1f} s"
+    reason = result.get("reason", "")
+    if reason.startswith("gate"):
+        states.update(gate="stop", think="skip", write="skip", check="skip")
+        notes["gate"] = "not relevant"
+    elif reason.startswith("writer"):
+        states["check"] = "skip"
+        notes["write"] = "not in sources"
+    if result.get("cached"):
+        notes = {key: "from cache" for key, _, _ in STEPS}
+    return tracker_html(states, notes)
+
+
+def run_question(question):
+    """Ask one question and show the pipeline working live. Returns (result, error_message)."""
     if not 3 <= len(question) <= 500:
         return None, "Please type a real question (between 3 and 500 characters)."
-    stage, thinking_box, text = st.empty(), st.empty(), st.empty()
-    first_time = DIRECT_MODE and "result" not in st.session_state
-    stage.info("Starting…" + (" The first question after the app wakes up takes 1–2 minutes while the AI "
-                              "models load." if first_time else ""), icon="⏳")
-    thought, written = "", ""
+    order = [key for key, _, _ in STEPS]
+    states = {key: "todo" for key in order}
+    notes, started = {}, {}
+    tracker, stream_box, text = st.empty(), st.empty(), st.empty()
 
-    def clear_progress():
-        stage.empty()
-        thinking_box.empty()
+    def move_to(step):
+        """Mark every step before `step` as done (with its time) and light up `step`."""
+        now = time.perf_counter()
+        for key in order[: order.index(step)]:
+            if states[key] != "done":
+                if key in started:
+                    notes.setdefault(key, f"{now - started[key]:.1f} s")
+                states[key] = "done"
+        if states[step] != "active":
+            states[step] = "active"
+            started[step] = now
+        tracker.markdown(tracker_html(states, notes), unsafe_allow_html=True)
+
+    def clear_live_view():
+        tracker.empty()
+        stream_box.empty()
         text.empty()
 
+    def streaming_placeholder(thought=""):
+        shown = ("…" + thought[-THINKING_SHOWN:]) if len(thought) > THINKING_SHOWN else thought
+        stream_box.markdown('<div class="stream-label">● Streaming response…</div>'
+                            '<div class="bar" style="width:92%"></div><div class="bar" style="width:78%"></div>'
+                            '<div class="bar" style="width:60%"></div>'
+                            + (f'<div class="thought">💭 {html.escape(shown)}</div>' if shown else ""),
+                            unsafe_allow_html=True)
+
+    first_time = DIRECT_MODE and not st.session_state.get("history")
+    move_to("search")
+    if first_time:
+        notes["search"] = "loading models…"
+        tracker.markdown(tracker_html(states, notes), unsafe_allow_html=True)
+    thought, written = "", ""
     try:
         for update in get_updates(question):
-            if update["type"] == "stage":
-                stage.info(update["text"], icon="⏳")
-            elif update["type"] == "thinking":
+            kind = update["type"]
+            if kind == "stage" and update["text"].startswith("Found"):
+                found = re.search(r"in ([\d.]+) s", update["text"])
+                notes["search"] = f"{found.group(1)} s" if found else notes.get("search", "")
+                notes["rerank"], notes["gate"] = "5 passages", "passed"
+                move_to("think")
+                streaming_placeholder()
+            elif kind == "stage" and update["text"].startswith("Fact-checking"):
+                move_to("check")
+            elif kind == "thinking":
                 thought += update["text"]
-                thinking_box.caption("💭 " + ("…" + thought[-THINKING_SHOWN:] if len(thought) > THINKING_SHOWN else thought))
+                streaming_placeholder(thought)
                 time.sleep(THINKING_PAUSE)
-            elif update["type"] == "text":
-                thinking_box.empty()
+            elif kind == "text":
+                if states["write"] != "active":
+                    move_to("write")
+                    stream_box.empty()
                 written += update["text"]
-                text.markdown(re.sub(r"【(\d+)(?:†[^】]*)?】", r"[\1]", written) + " ▌")
+                text.markdown(CITATION.sub(r"[\1]", written) + " ▌")
                 time.sleep(TYPING_PAUSE)
-            elif update["type"] == "done":
-                clear_progress()
+            elif kind == "done":
+                clear_live_view()
                 return update["result"], None
     except Exception as error:
-        clear_progress()
+        clear_live_view()
         return None, explain_error(error)
-    clear_progress()
+    clear_live_view()
     return None, "The answer stopped unexpectedly. Please try again."
 
 
@@ -190,13 +361,12 @@ def send_feedback(result, vote, comment):
         return False
 
 
-def feedback_section(result):
+def feedback_section(result, turn):
     """Thumbs up/down under an answer, plus an optional comment after a thumbs down."""
-    key = "feedback_" + hashlib.md5((result["question"] + result["answer"]).encode("utf-8")).hexdigest()[:12]
+    key = f"feedback_{turn}_" + hashlib.md5((result["question"] + result["answer"]).encode("utf-8")).hexdigest()[:10]
     if st.session_state.get(key + "_saved"):
         st.caption("Thanks for your feedback! 🙏")
         return
-    st.caption("Was this answer helpful?")
     vote = st.feedback("thumbs", key=key)
     if vote is None:
         return
@@ -230,7 +400,7 @@ def within_daily_limit():
     return True
 
 
-# ---------- small display helpers ----------
+# ---------- showing an answer ----------
 def docs_link(path):
     """Turn data\\raw\\tutorial\\cors.md into the matching page on the FastAPI website."""
     page = path.replace("\\", "/").split("data/raw/", 1)[-1]
@@ -241,113 +411,147 @@ def docs_link(path):
     return DOCS_SITE + page
 
 
-def show_badge(result):
+def pretty_path(path):
+    """data\\raw\\tutorial\\security\\simple-oauth2.md -> tutorial › security › simple-oauth2"""
+    page = path.replace("\\", "/").split("data/raw/", 1)[-1].removesuffix(".md")
+    return " › ".join(page.split("/"))
+
+
+def answer_header(result):
+    """Confidence ring, level, what it means, and time/tokens."""
     name, colour, note = LEVELS.get(result["level"], LEVELS["none"])
-    label = name if result["level"] == "none" else f"{name} · {result['confidence']:.2f}"
-    st.markdown(
-        f'<span class="badge" style="background:{colour}">{label}</span>'
-        f'<span class="badge-note">{note}</span>',
-        unsafe_allow_html=True,
-    )
-
-
-def show_result(result):
-    st.markdown(f"#### {result['question']}")
-    show_badge(result)
+    percent = round(result["confidence"] * 100)
+    stats = result.get("stats") or {}
     if result.get("cached"):
-        st.caption("⚡ Answered from cache – this question was asked recently, so no AI call was needed.")
-    elif result.get("stats"):
-        stats = result["stats"]
-        st.caption(f"⏱ {stats['total_seconds']:.1f} s · {stats['total_tokens']:,} AI tokens")
-    st.write("")
+        meta = "<b>⚡ from cache</b> · no AI call needed"
+    elif stats:
+        meta = f"<b>⏱ {stats.get('total_seconds', 0):.1f} s</b> · {stats.get('total_tokens', 0):,} AI tokens"
+    else:
+        meta = ""
+    ring_label = f"{percent}%" if result["answered"] else "–"
+    st.markdown(
+        f'<div class="ahead"><div class="ring" style="background:conic-gradient({colour} {percent}%, #232831 0)">'
+        f'<div style="color:{colour}">{ring_label}</div></div>'
+        f'<div><div class="level" style="color:{colour}">{name + " CONFIDENCE" if result["answered"] else name}</div>'
+        f'<div class="note">{note or "No answer was given."}</div><div class="meta">{meta}</div></div></div>',
+        unsafe_allow_html=True)
 
+
+def render_answer(result, turn):
+    """One finished answer inside its chat bubble."""
+    answer_header(result)
+    st.markdown(tracker_for_result(result), unsafe_allow_html=True)
     if not result["answered"]:
         kind = result["reason"].split(":")[0]
-        st.info(f"**I don't know.**  \n{REASONS.get(kind, result['reason'])}", icon="🤷")
+        st.markdown(f'<div class="refusal"><b>🤷 I don\'t know.</b><br>'
+                    f'{html.escape(REASONS.get(kind, result["reason"]))}</div>', unsafe_allow_html=True)
         return
-
-    with st.container(border=True):
-        st.markdown(result["answer"])
-
+    st.markdown(result["answer"])
     if result["bad_citations"]:
         st.warning(f"The answer cites sources that don't exist: {result['bad_citations']}", icon="⚠️")
-
     sources = result["sources"]
-    with st.expander(f"📚 Sources ({len(sources)})", expanded=True):
+    if sources:
+        cards = []
         for s in sources:
             link = docs_link(s["path"])
-            name = f"[{s['source']}]({link})" if link else s["source"]
-            st.markdown(f"**[{s['number']}]** {name}  \n<small>`{s['path']}`</small>", unsafe_allow_html=True)
-
+            inner = (f'<span class="num">{s["number"]}</span><span class="name">{html.escape(pretty_path(s["path"]))}'
+                     f'</span><div class="go">{"open on fastapi.tiangolo.com ↗" if link else html.escape(s["source"])}</div>')
+            cards.append(f'<a class="src" href="{link}" target="_blank">{inner}</a>' if link
+                         else f'<div class="src">{inner}</div>')
+        st.markdown(f'<div class="label">Sources · {len(sources)}</div><div class="srcs">{"".join(cards)}</div>',
+                    unsafe_allow_html=True)
     checks = result["checks"]
-    confirmed = sum(c["supported"] for c in checks)
-    with st.expander(f"🔍 Fact-check: {confirmed} of {len(checks)} claims confirmed"):
+    confirmed = sum(1 for c in checks if c.get("supported"))
+    with st.expander(f"🔍 Fact-check · {confirmed} of {len(checks)} claims confirmed"):
         for c in checks:
-            icon = "✅" if c.get("supported") else "❌"
-            cited = ", ".join(f"[{n}]" for n in c["citations"]) or "no citation"
-            st.markdown(f"{icon} {c['claim']}  \n<small>cited: {cited}</small>", unsafe_allow_html=True)
-
-    feedback_section(result)
+            ok = bool(c.get("supported"))
+            cited = ", ".join(f"[{n}]" for n in c.get("citations", [])) or "no citation"
+            st.markdown(f'<div class="claim {"ok" if ok else "bad"}">{"✅" if ok else "❌"} {html.escape(c["claim"])}'
+                        f'<br><small>cited: {cited}</small></div>', unsafe_allow_html=True)
+    feedback_section(result, turn)
 
 
 # ---------- sidebar ----------
 with st.sidebar:
-    st.markdown("### How it works")
-    st.markdown(
-        "1. **Hybrid search** – meaning (embeddings) + keywords (BM25), merged with RRF\n"
-        "2. **Reranker** picks the 5 best chunks\n"
-        "3. **Gate** – says *I don't know* if nothing is relevant\n"
-        "4. **Writer** answers only from those chunks, with citations\n"
-        "5. **Judge** fact-checks every claim → confidence"
-    )
-    st.markdown("### Tested on 50 questions")
-    c1, c2 = st.columns(2)
-    c1.metric("Correct", "84%")
-    c2.metric("Honest refusals", "10 / 10")
-    st.caption("Faithfulness 84% – share of claims backed by the sources.")
-    st.divider()
+    st.markdown('<div class="brand">🤖 RAG Assistant</div>', unsafe_allow_html=True)
     if DIRECT_MODE:
-        st.info("Running the pipeline inside this app (cloud demo mode).", icon="☁️")
+        status = '<span class="dot on"></span>Online · cloud demo mode'
     elif api_is_up():
-        st.success(f"API online · {API_URL}", icon="🟢")
+        status = f'<span class="dot on"></span>Online · API {html.escape(API_URL)}'
     else:
-        st.error(f"API offline · {API_URL}", icon="🔴")
+        status = f'<span class="dot off"></span>Offline · API {html.escape(API_URL)}'
+    st.markdown(f'<div class="status">{status}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="label">At a glance</div><div class="arch">'
+                '<div class="node">Your question</div><div class="arrow">↓</div>'
+                '<div class="node">Hybrid search<small>embeddings + BM25 → RRF</small></div><div class="arrow">↓</div>'
+                '<div class="node">Reranker<small>MiniLM cross-encoder · top 5</small></div><div class="arrow">↓</div>'
+                '<div class="node">Gate<small>refuse if nothing is relevant</small></div><div class="arrow">↓</div>'
+                '<div class="node">Writer<small>gpt-oss-120b on Groq · citations</small></div><div class="arrow">↓</div>'
+                '<div class="node">Judge<small>checks every claim → confidence</small></div></div>',
+                unsafe_allow_html=True)
+    st.markdown('<div class="label" style="margin-top:1rem">Tested</div><div class="mini">'
+                '<div><b>93%</b><span>correct (exam)</span></div><div><b>20/20</b><span>honest refusals</span></div>'
+                '<div><b>90%</b><span>faithfulness</span></div><div><b>76%</b><span>passage found</span></div>'
+                '</div>', unsafe_allow_html=True)
+    st.write("")
+    if st.button("🧹  Clear chat", width="stretch"):
+        st.session_state["history"] = []
+        st.rerun()
+    st.caption("Each question is answered on its own – the assistant doesn't remember earlier questions.")
+    st.markdown(f'<div class="footer"><a href="{GITHUB_URL}" target="_blank">GitHub ↗</a></div>',
+                unsafe_allow_html=True)
 
 
 # ---------- main page ----------
-st.markdown(
-    '<div class="hero"><h1>📘 Ask the FastAPI docs</h1>'
-    "<p>Answers come only from the official documentation – with sources, a fact-check, "
-    "and an honest <i>I don't know</i> when the docs don't cover it.</p></div>",
-    unsafe_allow_html=True,
-)
+history = st.session_state.setdefault("history", [])
 
 
-def use_example(text):
-    st.session_state["question"] = text
-    st.session_state["ask_now"] = True
+def ask_example(text):
+    st.session_state["pending"] = text
 
 
-st.caption("Try an example:")
-cols = st.columns(2)
-for i, example in enumerate(EXAMPLES):
-    cols[i % 2].button(example, on_click=use_example, args=(example,), width="stretch")
+if not history:
+    st.markdown('<div class="eyebrow">Hybrid RAG · FastAPI docs</div>'
+                '<div class="title">Ask the<br><span>FastAPI docs</span></div>'
+                '<div class="subtitle">Search · Rerank · Fact-check</div>'
+                '<div class="chips"><span class="chip"><b>◉</b> Live streaming</span>'
+                '<span class="chip"><b>✓</b> Cited &amp; fact-checked</span>'
+                '<span class="chip"><b>∅</b> Honest “I don\'t know”</span>'
+                '<span class="chip"><b>⚡</b> Cached repeats</span></div>'
+                '<div class="stats">'
+                + "".join(f'<div class="stat"><div class="n">{n}</div><div class="l">{label}</div></div>'
+                          for n, label in HEADLINE_STATS)
+                + '</div><div class="label">Try an example</div>', unsafe_allow_html=True)
+    cols = st.columns(2)
+    for i, (icon, example) in enumerate(EXAMPLES):
+        cols[i % 2].button(f"{icon}  {example}", on_click=ask_example, args=(example,), width="stretch",
+                           key=f"example_{i}")
+else:
+    st.markdown('<div class="eyebrow">Hybrid RAG · FastAPI docs</div>'
+                '<div class="title small">Ask the <span>FastAPI docs</span></div>', unsafe_allow_html=True)
 
-with st.form("ask_form", clear_on_submit=False):
-    question = st.text_input("Your question", key="question", placeholder="e.g. How do I add CORS to my app?")
-    submitted = st.form_submit_button("Ask", type="primary", width="stretch")
+for turn, item in enumerate(history):
+    with st.chat_message("user"):
+        st.markdown(item["question"])
+    with st.chat_message("assistant", avatar="🤖"):
+        if item.get("error"):
+            st.markdown(f'<div class="errorcard">🚫 {html.escape(item["error"])}</div>', unsafe_allow_html=True)
+        else:
+            render_answer(item["result"], turn)
 
-if submitted or st.session_state.pop("ask_now", False):
-    if within_daily_limit():
-        result, error = answer_with_live_progress(st.session_state["question"].strip())
-    else:
-        result, error = None, f"This demo has reached its limit of {DAILY_LIMIT} questions for today. Please come back tomorrow!"
-    if error:
-        st.session_state.pop("result", None)
-        st.error(error, icon="🚫")
-    else:
-        st.session_state["result"] = result
+typed = st.chat_input("Ask anything about FastAPI…")
+question = (typed or st.session_state.pop("pending", None) or "").strip()
+if question:
+    with st.chat_message("user"):
+        st.markdown(question)
+    with st.chat_message("assistant", avatar="🤖"):
+        if within_daily_limit():
+            result, error = run_question(question)
+        else:
+            result, error = None, f"This demo has reached its limit of {DAILY_LIMIT} questions for today. Please come back tomorrow!"
+    history.append({"question": question, "result": result, "error": error})
+    del history[:-MAX_TURNS]
+    st.rerun()
 
-if "result" in st.session_state:
-    st.divider()
-    show_result(st.session_state["result"])
+st.markdown(f'<div class="footer">FastAPI docs · ChromaDB · BM25 · MiniLM reranker · gpt-oss-120b on Groq · '
+            f'<a href="{GITHUB_URL}" target="_blank">source on GitHub ↗</a></div>', unsafe_allow_html=True)
