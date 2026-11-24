@@ -122,5 +122,30 @@
       "q38",
       "q39"
     ]
+  },
+  "hybrid + reranker + next chunk": {
+    "file_hit_at_5": 0.85,
+    "file_mrr": 0.7041666666666667,
+    "chunk_hit_at_1": 0.25,
+    "chunk_hit_at_5": 0.6,
+    "chunk_mrr": 0.38,
+    "chunk_missed": [
+      "q01",
+      "q02",
+      "q04",
+      "q09",
+      "q11",
+      "q12",
+      "q16",
+      "q17",
+      "q18",
+      "q24",
+      "q27",
+      "q31",
+      "q34",
+      "q35",
+      "q38",
+      "q39"
+    ]
   }
 }

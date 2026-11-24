@@ -72,11 +72,12 @@ def print_scoreboard(rows, total):
         print(f"  {r['id']}  {r['verdict']:10} {r['grader_reason'][:90]}")
 
 
-def main(questions_file=QUESTIONS_FILE):  # CHANGED
+def main(questions_file=QUESTIONS_FILE, results_file=None):
     """Ask and grade every question in one file, saving after each one, then print the scoreboard."""
-    questions = load_questions(questions_file)  # CHANGED
-    results_file = Path(questions_file).with_name(Path(questions_file).name.replace("questions", "answer_results"))  # NEW
-    done = load_done(results_file)  # CHANGED
+    questions = load_questions(questions_file)
+    if results_file is None:
+        results_file = Path(questions_file).with_name(Path(questions_file).name.replace("questions", "answer_results"))
+    done = load_done(results_file)
     for item in questions:
         if item["id"] in done:
             continue
