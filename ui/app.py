@@ -109,8 +109,8 @@ def load_pipeline():
     project_root = str(Path(__file__).resolve().parent.parent)
     if project_root not in sys.path:
         sys.path.insert(0, project_root)
-    from src.generation.answer import ask
-    return ask
+    from src.generation.cache import cached_ask
+    return cached_ask
 
 
 def ask_direct(question):
@@ -173,6 +173,8 @@ def show_badge(result):
 def show_result(result):
     st.markdown(f"#### {result['question']}")
     show_badge(result)
+    if result.get("cached"):
+        st.caption("⚡ Answered from cache – this question was asked recently, so no AI call was needed.")
     st.write("")
 
     if not result["answered"]:

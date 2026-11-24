@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field  # NEW
 
-from src.generation.answer import ask  # NEW
-
+from src.generation.cache import cached_ask
 app = FastAPI(title="Hybrid RAG over the FastAPI docs")
 
 
@@ -23,4 +22,4 @@ def health():
 @app.post("/ask")  # NEW
 def ask_question(body: Question):  # NEW
     """Answer a question about FastAPI, with sources and a confidence level."""  # NEW
-    return ask(body.question)  # NEW
+    return cached_ask(body.question)
