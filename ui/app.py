@@ -207,7 +207,7 @@ def feedback_section(result):
             return
     if send_feedback(result, "up" if vote == 1 else "down", comment):
         st.session_state[key + "_saved"] = True
-        st.caption("Thanks for your feedback! 🙏")
+        st.rerun()  # redraw the page so the buttons are replaced by the thank-you note
     else:
         st.caption("Sorry – your feedback couldn't be saved right now.")
 
