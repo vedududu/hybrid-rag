@@ -1,11 +1,12 @@
 import json
+import sys  # NEW
 import time
 from pathlib import Path
 
 from openai import RateLimitError
 
 from src.evaluation.grader import grade
-from src.evaluation.retrieval_eval import load_questions
+from src.evaluation.retrieval_eval import QUESTIONS_FILE, load_questions  # CHANGED
 from src.generation.answer import ask
 
 RESULTS_FILE = "data/eval/answer_results.json"
@@ -71,10 +72,11 @@ def print_scoreboard(rows, total):
         print(f"  {r['id']}  {r['verdict']:10} {r['grader_reason'][:90]}")
 
 
-def main():
-    """Ask and grade every question, saving after each one, then print the scoreboard."""
-    questions = load_questions()
-    done = load_done()
+def main(questions_file=QUESTIONS_FILE):  # CHANGED
+    """Ask and grade every question in one file, saving after each one, then print the scoreboard."""
+    questions = load_questions(questions_file)  # CHANGED
+    results_file = Path(questions_file).with_name(Path(questions_file).name.replace("questions", "answer_results"))  # NEW
+    done = load_done(results_file)  # CHANGED
     for item in questions:
         if item["id"] in done:
             continue
@@ -98,10 +100,10 @@ def main():
             "score": verdict["score"],
             "grader_reason": verdict["reason"],
         }
-        save(list(done.values()))
+        save(list(done.values()), results_file)  # CHANGED
         print(f"{item['id']}  {verdict['verdict']:10} level {result['level']:6} ({time.time() - start:.0f}s)")
     print_scoreboard(list(done.values()), len(questions))
 
 
 if __name__ == "__main__":
-    main()
+    main(*sys.argv[1:])  # CHANGED
