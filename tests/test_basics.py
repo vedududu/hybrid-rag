@@ -101,3 +101,20 @@ def test_feedback_route_accepts_only_up_or_down(monkeypatch):
     bad = client.post("/feedback", json={"question": "How do I add CORS?", "answer": "x", "vote": "meh"})
     assert good.json() == {"saved": True, "stored_in": "file"}
     assert bad.status_code == 422
+
+
+def test_stream_counts_tokens_once(monkeypatch):
+    """What this test checks: Groq puts the token count on the last two chunks of a stream,
+    and we must record it only once."""
+    from types import SimpleNamespace as NS
+    from src.generation import llm
+    usage = NS(prompt_tokens=74, completion_tokens=46)
+    chunks = [NS(choices=[NS(delta=NS(content="Hi", reasoning=None))], usage=None),
+              NS(choices=[NS(delta=NS(content="!", reasoning=None))], usage=usage),
+              NS(choices=[], usage=usage)]
+    fake_client = NS(chat=NS(completions=NS(create=lambda **settings: iter(chunks))))
+    monkeypatch.setattr(llm, "get_client", lambda: fake_client)
+    log = []
+    text = "".join(u["text"] for u in llm.stream_llm("hi", usage_log=log) if u["type"] == "text")
+    assert text == "Hi!"
+    assert log == [{"in": 74, "out": 46}]

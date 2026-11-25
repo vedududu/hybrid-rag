@@ -57,6 +57,7 @@ def stream_llm(prompt, system=None, temperature=0, usage_log=None):
         stream=True,
         stream_options={"include_usage": True},
     )
+    usage = None
     for chunk in stream:
         if chunk.choices:
             delta = chunk.choices[0].delta
@@ -65,5 +66,7 @@ def stream_llm(prompt, system=None, temperature=0, usage_log=None):
                 yield {"type": "thinking", "text": thinking}
             if delta.content:
                 yield {"type": "text", "text": delta.content}
-        if chunk.usage and usage_log is not None:
-            usage_log.append({"in": chunk.usage.prompt_tokens, "out": chunk.usage.completion_tokens})
+        if chunk.usage:
+            usage = chunk.usage  # Groq repeats the count on the last two chunks, so keep just one
+    if usage and usage_log is not None:
+        usage_log.append({"in": usage.prompt_tokens, "out": usage.completion_tokens})
