@@ -48,7 +48,7 @@ EXAMPLES = [
     ("🚀", "How do I run code when the app starts up?"),
     ("🍗", "How do I roast a chicken?"),
 ]
-HEADLINE_STATS = [("93%", "correct on a 100-question held-out exam"), ("20/20", "honest “I don't know”"),
+HEADLINE_STATS = [("95%","correct on a 100-question held-out exam"), ("20/20", "honest “I don't know”"),
                   ("~8 s", "per answer")]
 STEPS = [("search", "Search", "meaning + keywords"), ("rerank", "Rerank", "best 5 passages"),
          ("gate", "Gate", "relevant enough?"), ("think", "Think", "AI reads sources"),
@@ -490,8 +490,8 @@ with st.sidebar:
                 '<div class="node">Judge<small>checks every claim → confidence</small></div></div>',
                 unsafe_allow_html=True)
     st.markdown('<div class="label" style="margin-top:1rem">Tested</div><div class="mini">'
-                '<div><b>93%</b><span>correct (exam)</span></div><div><b>20/20</b><span>honest refusals</span></div>'
-                '<div><b>90%</b><span>faithfulness</span></div><div><b>76%</b><span>passage found</span></div>'
+                '<div><b>95%</b><span>correct (exam)</span></div><div><b>20/20</b><span>honest refusals</span></div>'
+                '<div><b>81%</b><span>faithfulness</span></div><div><b>84%</b><span>passage found</span></div>'
                 '</div>', unsafe_allow_html=True)
     st.write("")
     if st.button("🧹  Clear chat", width="stretch"):

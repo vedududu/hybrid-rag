@@ -1,0 +1,3181 @@
+[
+  {
+    "id": "t001",
+    "question": "How do I split routes into separate modules and register them with the main app?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create an `APIRouter` in each module that will hold a group of routes, e.g.:\n\n```python\n# app/routers/users.py\nfrom fastapi import APIRouter\n\nrouter = APIRouter()\n\n@router.get(\"/users/\", tags=[\"users\"])\nasync def read_users():\n    return [{\"username\": \"Rick\"}, {\"username\": \"Morty\"}]\n\n@router.get(\"/users/me\", tags=[\"users\"])\nasync def read_user_me():\n    return {\"username\": \"fakecurrentuser\"}\n\n@router.get(\"/users/{username}\", tags=[\"users\"])\nasync def read_user(username: str):\n    return {\"username\": username}\n```  \n[1]\n\nDo the same for other groups (e.g., `app/routers/items.py`).  \n\nIn the main application file import the **submodules** (not just the `router` variable) to avoid name collisions, then add each router to the `FastAPI` instance with `include_router`:\n\n```python\n# app/main.py\nfrom fastapi import Depends, FastAPI\n\nfrom .dependencies import get_query_token, get_token_header\nfrom .internal import admin\nfrom .routers import items, users   # import submodules, not just router variables\n\napp = FastAPI(dependencies=[Depends(get_query_token)])\n\napp.include_router(users.router)\napp.include_router(items.router)\napp.include_router(\n    admin.router,\n    prefix=\"/admin\",\n    tags=[\"admin\"],\n    dependencies=[Depends(get_token_header)],\n    responses={418: {\"description\": \"I'm a teapot\"}},\n)\n```  \n[4][5]\n\nThis splits the routes into separate modules (`users.py`, `items.py`, etc.) and registers them with the main `FastAPI` app via `app.include_router(...)`.",
+    "level": "low",
+    "confidence": 0.2,
+    "support": 0.2,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student describes creating APIRouter per module, defining routes, and including them in the main app, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 6.67,
+        "writer": 4.02,
+        "judge": 3.75
+      },
+      "tokens": {
+        "writer": {
+          "in": 1845,
+          "out": 511
+        },
+        "judge": {
+          "in": 1845,
+          "out": 511
+        }
+      },
+      "total_tokens": 8233,
+      "total_seconds": 14.44
+    }
+  },
+  {
+    "id": "t002",
+    "question": "How can I update only the fields a client actually sent?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use a\u202f`PATCH` endpoint and let the Pydantic model dump only the fields that were actually provided by the client.  \nCall `model_dump(exclude_unset=True)` on the incoming model to get a dictionary containing just the sent values, then apply those to the existing record with `sqlmodel_update` before committing the session.  \n\n```python\n@app.patch(\"/heroes/{hero_id}\", response_model=HeroPublic)\ndef update_hero(hero_id: int, hero: HeroUpdate, session: SessionDep):\n    hero_db = session.get(Hero, hero_id)\n    if not hero_db:\n        raise HTTPException(status_code=404, detail=\"Hero not found\")\n    hero_data = hero.model_dump(exclude_unset=True)   # only sent fields\n    hero_db.sqlmodel_update(hero_data)                # update those fields\n    session.add(hero_db)\n    session.commit()\n    session.refresh(hero_db)\n    return hero_db\n```  \n\nThis pattern updates only the fields the client actually sent\u202f[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes using model_dump(exclude_unset=True) to get only sent fields and applying them to the stored model, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.86,
+        "writer": 1.6,
+        "judge": 13.73
+      },
+      "tokens": {
+        "writer": {
+          "in": 1617,
+          "out": 322
+        },
+        "judge": {
+          "in": 1617,
+          "out": 322
+        }
+      },
+      "total_tokens": 6341,
+      "total_seconds": 16.19
+    }
+  },
+  {
+    "id": "t003",
+    "question": "How do I declare a list of nested Image models in a request body?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Declare a Pydantic model for the nested object (e.g., `Image`) and type the request\u2011body parameter as `list[Image]` in the endpoint function:\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, HttpUrl\n\napp = FastAPI()\n\n\nclass Image(BaseModel):\n    url: HttpUrl\n    name: str\n\n\n@app.post(\"/images/multiple/\")\nasync def create_multiple_images(images: list[Image]):\n    return images\n```\n\nFastAPI will then accept a JSON array of `Image` objects as the request body and provide full editor support.\u202f[3]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to declare a list of a nested Pydantic model (Image) and FastAPI will validate each object",
+    "stats": {
+      "seconds": {
+        "search": 0.97,
+        "writer": 14.95,
+        "judge": 17.71
+      },
+      "tokens": {
+        "writer": {
+          "in": 1869,
+          "out": 286
+        },
+        "judge": {
+          "in": 1869,
+          "out": 286
+        }
+      },
+      "total_tokens": 6826,
+      "total_seconds": 33.63
+    }
+  },
+  {
+    "id": "t004",
+    "question": "How do I add a validation constraint and description to one body field?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Import `Field` from **pydantic** and use it on the model attribute, passing the validation arguments (e.g., `gt=0`) and a `description` string\u202f[1][5].\n\n```python\nfrom pydantic import BaseModel, Field\n\nclass Item(BaseModel):\n    price: float = Field(gt=0, description=\"The price must be greater than zero\")\n```",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes using Field() in the model to add validation and description, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.92,
+        "writer": 13.84,
+        "judge": 14.37
+      },
+      "tokens": {
+        "writer": {
+          "in": 1633,
+          "out": 348
+        },
+        "judge": {
+          "in": 1633,
+          "out": 348
+        }
+      },
+      "total_tokens": 6054,
+      "total_seconds": 29.13
+    }
+  },
+  {
+    "id": "t005",
+    "question": "How should I keep a password out of the response while accepting it on input?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create two separate Pydantic models \u2013 one that includes the password for the request body and another that omits it for the response. Then tell FastAPI to use the output model with\u202f`response_model`. FastAPI will automatically filter out any fields (e.g.,\u202f`password`) that are not declared in the response model.\n\n```python\nfrom typing import Any\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel, EmailStr\n\napp = FastAPI()\n\n\nclass UserIn(BaseModel):\n    username: str\n    password: str          # \u2190 accepted on input\n    email: EmailStr\n    full_name: str | None = None\n\n\nclass UserOut(BaseModel):\n    username: str\n    email: EmailStr\n    full_name: str | None = None   # \u2190 password omitted\n\n\n@app.post(\"/user/\", response_model=UserOut)\nasync def create_user(user: UserIn) -> Any:\n    return user                     # FastAPI returns only fields in UserOut\n```\n[1][3]\n\n*Never store or return plaintext passwords; hash them before saving.*\u202f[5][4]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes using separate input and output models with password only on input and using response_model, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.73,
+        "writer": 19.5,
+        "judge": 20.27
+      },
+      "tokens": {
+        "writer": {
+          "in": 1838,
+          "out": 499
+        },
+        "judge": {
+          "in": 1838,
+          "out": 499
+        }
+      },
+      "total_tokens": 7518,
+      "total_seconds": 40.5
+    }
+  },
+  {
+    "id": "t006",
+    "question": "Which Python type can represent a UUID path or body value?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "The Python\u202f`UUID` type (imported from the standard\u202f`uuid` module) can be used for a UUID path or body value[1].",
+    "level": "low",
+    "confidence": 0.0,
+    "support": 0.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly identifies the Python UUID type as the appropriate type for a UUID path or body value, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.86,
+        "writer": 17.71,
+        "judge": 13.06
+      },
+      "tokens": {
+        "writer": {
+          "in": 1632,
+          "out": 122
+        },
+        "judge": {
+          "in": 1632,
+          "out": 122
+        }
+      },
+      "total_tokens": 5406,
+      "total_seconds": 31.63
+    }
+  },
+  {
+    "id": "t007",
+    "question": "How do I require a query string to be at least three characters long?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use `Query` with the `min_length` argument (inside an `Annotated` type) so FastAPI validates that the string has at least three characters. For example:\n\n```python\nfrom typing import Annotated\n\nfrom fastapi import FastAPI, Query\n\napp = FastAPI()\n\n\n@app.get(\"/items/\")\nasync def read_items(\n    q: Annotated[str | None, Query(min_length=3)] = None,\n):\n    results = {\"items\": [{\"item_id\": \"Foo\"}, {\"item_id\": \"Bar\"}]}\n    if q:\n        results.update({\"q\": q})\n    return results\n```\n\n`min_length=3` tells FastAPI to reject any query value shorter than three characters and to return a clear validation error to the client.\u202f[3][5]",
+    "level": "medium",
+    "confidence": 0.5,
+    "support": 0.5,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states using Query(min_length=3) to enforce minimum length, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.83,
+        "writer": 20.3,
+        "judge": 18.85
+      },
+      "tokens": {
+        "writer": {
+          "in": 2026,
+          "out": 358
+        },
+        "judge": {
+          "in": 2026,
+          "out": 358
+        }
+      },
+      "total_tokens": 7541,
+      "total_seconds": 39.98
+    }
+  },
+  {
+    "id": "t008",
+    "question": "How can I reject query parameters that are not fields in my filter model?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Set the model\u2019s Pydantic configuration to forbid extra fields and use it as a query\u2011parameter model.  \n\n```python\nfrom typing import Annotated, Literal\nfrom fastapi import FastAPI, Query\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass FilterParams(BaseModel):\n    model_config = {\"extra\": \"forbid\"}          # \u2190 reject unknown query params\n    limit: int = Field(100, gt=0, le=100)\n    offset: int = Field(0, ge=0)\n    order_by: Literal[\"created_at\", \"updated_at\"] = \"created_at\"\n    tags: list[str] = []\n\n@app.get(\"/items/\")\nasync def read_items(filter_query: Annotated[FilterParams, Query()]):\n    return filter_query\n```\n\nWith `extra=\"forbid\"` any query parameter that isn\u2019t a field of `FilterParams` (e.g., `?tool=plumbus`) triggers a validation error response\u202f[1]. The same `extra` behavior now applies to all sibling fields and dependencies, ensuring unknown parameters are rejected across the whole request\u202f[2][3].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the key fact of setting model config to forbid extra fields, matching the reference answer.",
+    "stats": {
+      "seconds": {
+        "search": 0.76,
+        "writer": 1.4,
+        "judge": 1.97
+      },
+      "tokens": {
+        "writer": {
+          "in": 1894,
+          "out": 403
+        },
+        "judge": {
+          "in": 1894,
+          "out": 403
+        }
+      },
+      "total_tokens": 7481,
+      "total_seconds": 4.13
+    }
+  },
+  {
+    "id": "t009",
+    "question": "How do I require a path number to be greater than zero?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use a `Path` parameter with the **gt** (greater\u2011than) constraint set to\u202f0. For example:\n\n```python\nfrom typing import Annotated\nfrom fastapi import FastAPI, Path\n\napp = FastAPI()\n\n@app.get(\"/items/{item_id}\")\nasync def read_items(\n    item_id: Annotated[int, Path(gt=0, title=\"The ID of the item to get\")]\n):\n    return {\"item_id\": item_id}\n```\n\nThe `gt=0` argument makes FastAPI reject any path value that is\u202f0 or negative, requiring the number to be greater than zero\u202f[4][1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states using Path(gt=0) to enforce >0, matching reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.86,
+        "writer": 1.46,
+        "judge": 16.47
+      },
+      "tokens": {
+        "writer": {
+          "in": 1461,
+          "out": 473
+        },
+        "judge": {
+          "in": 1461,
+          "out": 473
+        }
+      },
+      "total_tokens": 5909,
+      "total_seconds": 18.79
+    }
+  },
+  {
+    "id": "t010",
+    "question": "How do I declare a Pydantic model whose fields come from cookies using `Cookie`?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create a Pydantic model that defines the cookie fields, then use an `Annotated` parameter with `Cookie()` so FastAPI extracts each cookie into the model\u202f[1].  \n\n```python\nfrom typing import Annotated\n\nfrom fastapi import Cookie, FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\nfrom fastapi import Cookie, FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\n\nclass Cookies(BaseModel):\n    session_id: str\n    fatebook_tracker: str | None = None\n    googall_tracker: str | None = None\n\n\n@app.get(\"/items/\")\nasync def read_items(cookies: Annotated[Cookies, Cookie()]):\n    return cookies\n```  \n\nFastAPI will read the cookies from the request, validate them against the model, and provide the populated `Cookies` instance to the path operation\u202f[1].  \n\nThis feature is available starting with FastAPI\u202f0.115.0\u202f[2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes declaring a Pydantic model and using Cookie() metadata to read fields from cookies",
+    "stats": {
+      "seconds": {
+        "search": 0.95,
+        "writer": 12.52,
+        "judge": 16.61
+      },
+      "tokens": {
+        "writer": {
+          "in": 1583,
+          "out": 464
+        },
+        "judge": {
+          "in": 1583,
+          "out": 464
+        }
+      },
+      "total_tokens": 6390,
+      "total_seconds": 30.08
+    }
+  },
+  {
+    "id": "t011",
+    "question": "How does FastAPI convert an underscore in a header parameter name?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "FastAPI automatically turns underscores in a header\u2011parameter variable name into hyphens in the actual HTTP header name (e.g., `my_header` becomes `my-header`). This behavior can be disabled by passing `Header(convert_underscores=False)` when declaring the parameter\u202f[1][4].",
+    "level": "medium",
+    "confidence": 0.5,
+    "support": 0.5,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states the default conversion of underscores to hyphens and adds non\u2011contradictory extra detail.",
+    "stats": {
+      "seconds": {
+        "search": 0.9,
+        "writer": 1.44,
+        "judge": 1.87
+      },
+      "tokens": {
+        "writer": {
+          "in": 1716,
+          "out": 200
+        },
+        "judge": {
+          "in": 1716,
+          "out": 200
+        }
+      },
+      "total_tokens": 6393,
+      "total_seconds": 4.21
+    }
+  },
+  {
+    "id": "t012",
+    "question": "How can I validate several related headers together and forbid extras?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create a Pydantic model that lists the related headers and set its `extra` configuration to `\"forbid\"` so any header not defined in the model is rejected. Then use that model with `Header()` in the endpoint.\n\n```python\nfrom typing import Annotated\n\nfrom fastapi import FastAPI, Header\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\n\nclass CommonHeaders(BaseModel):\n    model_config = {\"extra\": \"forbid\"}   # reject unknown headers\n\n    host: str\n    save_data: bool\n    if_modified_since: str | None = None\n    traceparent: str | None = None\n    x_tag: list[str] = []\n\n\n@app.get(\"/items/\")\nasync def read_items(headers: Annotated[CommonHeaders, Header()]):\n    return headers\n```\n\nIf a client sends a header that isn\u2019t declared (e.g., `tool: plumbus`), FastAPI returns an error indicating the extra header is not permitted[2].  \nYou can also combine this model with other header models or individual header parameters; each model\u2019s `extra` setting applies to all headers in the request[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes using a Pydantic model with Header() and setting extra='forbid' to reject unknown headers",
+    "stats": {
+      "seconds": {
+        "search": 0.83,
+        "writer": 1.34,
+        "judge": 18.22
+      },
+      "tokens": {
+        "writer": {
+          "in": 2005,
+          "out": 397
+        },
+        "judge": {
+          "in": 2005,
+          "out": 397
+        }
+      },
+      "total_tokens": 7804,
+      "total_seconds": 20.39
+    }
+  },
+  {
+    "id": "t013",
+    "question": "How do I mark an endpoint as deprecated in the generated docs without removing it?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add the `deprecated=True` argument to the path\u2011operation decorator (or to the router) so FastAPI marks the endpoint as deprecated in the OpenAPI docs while keeping it available.  \n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n\n@app.get(\"/elements/\", tags=[\"items\"], deprecated=True)\nasync def read_elements():\n    return [{\"item_id\": \"Foo\"}]\n```  \n\nThe endpoint will appear with a deprecation notice in the interactive documentation without being removed\u202f[1][4].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to use deprecated=True on the decorator, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.13,
+        "writer": 13.16,
+        "judge": 14.78
+      },
+      "tokens": {
+        "writer": {
+          "in": 1780,
+          "out": 273
+        },
+        "judge": {
+          "in": 1780,
+          "out": 273
+        }
+      },
+      "total_tokens": 6554,
+      "total_seconds": 29.07
+    }
+  },
+  {
+    "id": "t014",
+    "question": "How do I add an example request body to the generated schema?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add an `examples` entry to the JSON\u2011Schema metadata of the request model.  \nYou can do this with the model\u2019s `model_config` dictionary:\n\n```python\nclass Item(BaseModel):\n    name: str\n    description: str | None = None\n    price: float\n    tax: float | None = None\nmodel_config = {\n        \"json_schema_extra\": {\n            \"examples\": [\n                {\n                    \"name\": \"Foo\",\n                    \"description\": \"A very nice Item\",\n                    \"price\": 35.4,\n                    \"tax\": 3.2,\n                }\n            ]\n        }\n    }\n```\n\nThe `json_schema_extra` value is added unchanged to the generated JSON Schema and will appear in the OpenAPI docs as an example request body\u202f[1].\n\nYou can also add examples (or any other JSON\u2011Schema metadata) directly on fields, queries, or bodies with `json_schema_extra`, which will be included in the OpenAPI schema\u202f[5].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "wrong",
+    "score": 0.0,
+    "grader_reason": "Student suggests using json_schema_extra instead of the required openapi_examples parameter, missing the key fact from the reference answer.",
+    "stats": {
+      "seconds": {
+        "search": 0.96,
+        "writer": 16.15,
+        "judge": 17.0
+      },
+      "tokens": {
+        "writer": {
+          "in": 1564,
+          "out": 381
+        },
+        "judge": {
+          "in": 1564,
+          "out": 381
+        }
+      },
+      "total_tokens": 6339,
+      "total_seconds": 34.11
+    }
+  },
+  {
+    "id": "t015",
+    "question": "How do I serve a directory of static assets under a URL prefix?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Import `StaticFiles` and mount it at the desired URL prefix, pointing it at the directory that holds the assets:\n\n```python\nfrom fastapi import FastAPI\nfrom fastapi.staticfiles import StaticFiles\n\napp = FastAPI()\n\napp.mount(\"/static\", StaticFiles(directory=\"static\"), name=\"static\")\n```\n\nThe first argument to `app.mount` (e.g., `\"/static\"`) is the URL prefix, and the `directory` argument specifies the folder whose files will be served under that prefix[1]. The same pattern is shown in the custom\u2011docs example[2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes mounting StaticFiles at a URL prefix and pointing to the directory, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.91,
+        "writer": 16.82,
+        "judge": 15.01
+      },
+      "tokens": {
+        "writer": {
+          "in": 1561,
+          "out": 242
+        },
+        "judge": {
+          "in": 1561,
+          "out": 242
+        }
+      },
+      "total_tokens": 5931,
+      "total_seconds": 32.74
+    }
+  },
+  {
+    "id": "t016",
+    "question": "What kind of response should I return to stream events to a browser over SSE?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Return an `EventSourceResponse` (by setting `response_class=EventSourceResponse` in the path operation) to stream events to a browser over SSE[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to set response_class=EventSourceResponse and return it for SSE streaming",
+    "stats": {
+      "seconds": {
+        "search": 1.15,
+        "writer": 12.97,
+        "judge": 8.95
+      },
+      "tokens": {
+        "writer": {
+          "in": 1488,
+          "out": 202
+        },
+        "judge": {
+          "in": 1488,
+          "out": 202
+        }
+      },
+      "total_tokens": 5076,
+      "total_seconds": 23.07
+    }
+  },
+  {
+    "id": "t017",
+    "question": "What does the SQL session dependency with `yield` do for each request?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "The SQL session dependency creates a fresh `Session` (using the engine) at the start of each request, yields it to the path operation, and then closes it when the request finishes, guaranteeing one session per request[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes yielding a session and closing it per request, matching the reference",
+    "stats": {
+      "seconds": {
+        "search": 0.63,
+        "writer": 17.98,
+        "judge": 12.44
+      },
+      "tokens": {
+        "writer": {
+          "in": 1797,
+          "out": 203
+        },
+        "judge": {
+          "in": 1797,
+          "out": 203
+        }
+      },
+      "total_tokens": 6690,
+      "total_seconds": 31.05
+    }
+  },
+  {
+    "id": "t018",
+    "question": "Can one endpoint receive both uploaded files and ordinary form fields?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Yes. An endpoint can accept uploaded files and regular form fields together by declaring `File` (or `UploadFile`) and `Form` parameters in the same path operation\u202f[2][4].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that both File/UploadFile and Form can be declared together in the same endpoint, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.9,
+        "writer": 6.64,
+        "judge": 16.13
+      },
+      "tokens": {
+        "writer": {
+          "in": 1394,
+          "out": 144
+        },
+        "judge": {
+          "in": 1394,
+          "out": 144
+        }
+      },
+      "total_tokens": 4871,
+      "total_seconds": 23.67
+    }
+  },
+  {
+    "id": "t019",
+    "question": "Can a class instance itself be used as a dependency?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Yes.\u202fYou can pass a class instance to\u202f`Depends`\u202f(e.g.,\u202f`Depends(checker)`) and FastAPI will treat the instance as a callable dependency, invoking it with the request parameters and using its return value in the path\u2011operation function[1][2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "wrong",
+    "score": 0.0,
+    "grader_reason": "Student says a class instance can be passed to Depends, contradicting the reference which says to pass the callable class, not an instance",
+    "stats": {
+      "seconds": {
+        "search": 0.86,
+        "writer": 15.86,
+        "judge": 14.7
+      },
+      "tokens": {
+        "writer": {
+          "in": 1527,
+          "out": 231
+        },
+        "judge": {
+          "in": 1527,
+          "out": 231
+        }
+      },
+      "total_tokens": 5730,
+      "total_seconds": 31.42
+    }
+  },
+  {
+    "id": "t020",
+    "question": "How do I apply the same dependency to every route in an application?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add the dependency to the\u202f`dependencies`\u202fparameter when you create the\u202f`FastAPI`\u202fapplication (or an\u202f`APIRouter`). FastAPI will run that dependency for every path operation in the app.\n\n```python\nfrom fastapi import FastAPI, Depends\n\nasync def my_dependency():\n    # do something (e.g., authentication)\n    ...\n\napp = FastAPI(dependencies=[Depends(my_dependency)])\n```\n\nAll routes will have\u202f`my_dependency`\u202fexecuted before their own parameters are resolved\u202f[3]. This works the same way as the `dependencies` argument in `include_router`, which is also used to run a dependency for each operation in a router\u202f[2].",
+    "level": "low",
+    "confidence": 0.33,
+    "support": 0.3333333333333333,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to pass dependencies to FastAPI constructor, matching reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.84,
+        "writer": 4.24,
+        "judge": 18.5
+      },
+      "tokens": {
+        "writer": {
+          "in": 1225,
+          "out": 365
+        },
+        "judge": {
+          "in": 1225,
+          "out": 365
+        }
+      },
+      "total_tokens": 5457,
+      "total_seconds": 23.58
+    }
+  },
+  {
+    "id": "t021",
+    "question": "How can I run a dependency when its return value is not needed?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add the dependency to the `dependencies` argument of the path\u2011operation decorator.  \nFastAPI will execute each `Depends()` in that list, but it will not pass any returned value to the path\u2011operation function\u202f\u2014\u202fthe value is simply ignored.  \n\n```python\nfrom typing import Annotated\nfrom fastapi import Depends, FastAPI, Header, HTTPException\n\napp = FastAPI()\n\nasync def verify_token(x_token: Annotated[str, Header()]):\n    if x_token != \"fake-super-secret-token\":\n        raise HTTPException(status_code=400, detail=\"X-Token header invalid\")\n\nasync def verify_key(x_key: Annotated[str, Header()]):\n    if x_key != \"fake-super-secret-key\":\n        raise HTTPException(status_code=400, detail=\"X-Key header invalid\")\n    return x_key\n\n@app.get(\"/items/\", dependencies=[Depends(verify_token), Depends(verify_key)])\nasync def read_items():\n    return [{\"item\": \"Foo\"}, {\"item\": \"Bar\"}]\n```  \n\nThese dependencies are run the same way as normal ones, but their return values are not injected into `read_items`\u202f[1][4].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to use the decorator's dependencies argument and that FastAPI runs them without injecting return values",
+    "stats": {
+      "seconds": {
+        "search": 0.88,
+        "writer": 10.25,
+        "judge": 24.09
+      },
+      "tokens": {
+        "writer": {
+          "in": 1927,
+          "out": 363
+        },
+        "judge": {
+          "in": 1927,
+          "out": 363
+        }
+      },
+      "total_tokens": 7345,
+      "total_seconds": 35.22
+    }
+  },
+  {
+    "id": "t022",
+    "question": "How can a route receive the current user object rather than just a token?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create a dependency that turns the token into a\u202f`User` model and then inject that dependency into the path\u2011operation function.  \n\n```python\nfrom typing import Annotated\nfrom fastapi import Depends, FastAPI\nfrom fastapi.security import OAuth2PasswordBearer\nfrom pydantic import BaseModel\n\napp = FastAPI()\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\nclass User(BaseModel):\n    username: str\n    email: str | None = None\n    full_name: str | None = None\n    disabled: bool | None = None\n\ndef fake_decode_token(token):\n    return User(\n        username=token + \"fakedecoded\",\n        email=\"john@example.com\",\n        full_name=\"John Doe\",\n    )\n\nasync def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):\n    user = fake_decode_token(token)          # turn token \u2192 User\n    return user\n\n@app.get(\"/users/me\")\nasync def read_users_me(\n    current_user: Annotated[User, Depends(get_current_user)]\n):\n    return current_user\n```  \n\nThe route receives `current_user` as a `User` object instead of a raw token because `get_current_user` (which depends on `oauth2_scheme` to get the token) decodes the token and returns the `User` model, and the route declares `Depends(get_current_user)` for that parameter[1][4].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes creating a dependency that decodes the token into a User object and injecting it, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.88,
+        "writer": 16.5,
+        "judge": 18.73
+      },
+      "tokens": {
+        "writer": {
+          "in": 1646,
+          "out": 469
+        },
+        "judge": {
+          "in": 1646,
+          "out": 469
+        }
+      },
+      "total_tokens": 6800,
+      "total_seconds": 36.11
+    }
+  },
+  {
+    "id": "t023",
+    "question": "Can mounted static files appear as ordinary FastAPI path operations in OpenAPI?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "No. When you mount a `StaticFiles` instance (or any other sub\u2011application) with `app.mount(...)`, it is treated as an independent application, and its routes are **not** added to the main app\u2019s OpenAPI schema. The OpenAPI docs from the main FastAPI application won\u2019t include anything from the mounted application[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that mounted apps are independent and their routes are not added to the main OpenAPI schema, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.95,
+        "writer": 12.89,
+        "judge": 13.03
+      },
+      "tokens": {
+        "writer": {
+          "in": 1304,
+          "out": 277
+        },
+        "judge": {
+          "in": 1304,
+          "out": 277
+        }
+      },
+      "total_tokens": 5167,
+      "total_seconds": 26.87
+    }
+  },
+  {
+    "id": "t024",
+    "question": "What does jsonable_encoder return when given a Pydantic model?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "`jsonable_encoder` converts the Pydantic model into a JSON\u2011compatible Python object\u2014typically a `dict`\u2014with any non\u2011JSON types (e.g., `datetime`) transformed into JSON\u2011compatible representations such as strings[1][4].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states it returns a JSON\u2011compatible dict, converting non\u2011JSON types to compatible forms, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.0,
+        "writer": 11.8,
+        "judge": 13.18
+      },
+      "tokens": {
+        "writer": {
+          "in": 1469,
+          "out": 152
+        },
+        "judge": {
+          "in": 1469,
+          "out": 152
+        }
+      },
+      "total_tokens": 5149,
+      "total_seconds": 25.98
+    }
+  },
+  {
+    "id": "t025",
+    "question": "Which utility do I use to declare a dependency that requires OAuth2 scopes?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use the `Security()` utility to declare a dependency that includes OAuth2 scopes[5].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly identifies Security() as the utility for declaring dependencies with OAuth2 scopes",
+    "stats": {
+      "seconds": {
+        "search": 1.0,
+        "writer": 12.62,
+        "judge": 11.76
+      },
+      "tokens": {
+        "writer": {
+          "in": 1488,
+          "out": 114
+        },
+        "judge": {
+          "in": 1488,
+          "out": 114
+        }
+      },
+      "total_tokens": 4880,
+      "total_seconds": 25.38
+    }
+  },
+  {
+    "id": "t026",
+    "question": "How do I force a single scalar parameter to come from the JSON body?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Declare the parameter with `Body(..., embed=True)`.  \nFastAPI lets you \u201cembed\u201d a single scalar value in a JSON object by using the `Body` parameter with `embed=True`\u202f\u2014\u202fthe same way it does for models\u202f[1][3].  \n\n```python\nfrom fastapi import Body, FastAPI\n\napp = FastAPI()\n\n@app.post(\"/items/\")\nasync def create_item(value: int = Body(..., embed=True)):\n    return {\"value\": value}\n```\n\nWith `embed=True`, FastAPI expects a JSON body like `{\"value\": 123}` instead of a raw scalar.",
+    "level": "low",
+    "confidence": 0.0,
+    "support": 0.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student uses Body() on the scalar parameter, matching the reference, and adds extra but non\u2011contradictory detail",
+    "stats": {
+      "seconds": {
+        "search": 0.86,
+        "writer": 1.24,
+        "judge": 2.32
+      },
+      "tokens": {
+        "writer": {
+          "in": 1697,
+          "out": 374
+        },
+        "judge": {
+          "in": 1697,
+          "out": 374
+        }
+      },
+      "total_tokens": 6802,
+      "total_seconds": 4.42
+    }
+  },
+  {
+    "id": "t027",
+    "question": "How can I forbid extra fields in a submitted form model?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You can forbid any extra fields by setting the Pydantic model\u2019s configuration to `extra=\"forbid\"` and then using that model as a form parameter.\n\n```python\nfrom typing import Annotated\n\nfrom fastapi import FastAPI, Form\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\n\nclass FormData(BaseModel):\n    username: str\n    password: str\n    model_config = {\"extra\": \"forbid\"}   # \u2190 forbid any fields not declared above\n\n\n@app.post(\"/login/\")\nasync def login(data: Annotated[FormData, Form()]):\n    return data\n```\n\nWith `model_config = {\"extra\": \"forbid\"}`, any form field that isn\u2019t declared in `FormData` will cause FastAPI to return an error response\u202f[1][3].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes configuring the Pydantic model with extra='forbid' to reject unknown form fields, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.93,
+        "writer": 1.03,
+        "judge": 19.2
+      },
+      "tokens": {
+        "writer": {
+          "in": 2195,
+          "out": 280
+        },
+        "judge": {
+          "in": 2195,
+          "out": 280
+        }
+      },
+      "total_tokens": 8024,
+      "total_seconds": 21.16
+    }
+  },
+  {
+    "id": "t028",
+    "question": "How do I document a 404 response with its own Pydantic schema?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add a `responses` argument to the path\u2011operation decorator and give the\u202f404 entry a `model` that points to your own Pydantic class. FastAPI will generate the schema for that model and include it in the OpenAPI docs. Then return a `JSONResponse` (or another response) with status\u202f404.\n\n```python\nfrom fastapi import FastAPI\nfrom fastapi.responses import JSONResponse\nfrom pydantic import BaseModel\n\nclass Item(BaseModel):\n    id: str\n    value: str\n\nclass Message(BaseModel):\n    message: str\n\napp = FastAPI()\n\n@app.get(\n    \"/items/{item_id}\",\n    response_model=Item,\n    responses={404: {\"model\": Message, \"description\": \"The item was not found\"}},\n)\nasync def read_item(item_id: str):\n    if item_id == \"foo\":\n        return {\"id\": \"foo\", \"value\": \"there goes my hero\"}\n    return JSONResponse(status_code=404, content={\"message\": \"Item not found\"})\n```\n\nThe `responses={404: {\"model\": Message}}` part tells FastAPI to document the 404 response with the `Message` schema\u202f[2][4]. Returning `JSONResponse` with `status_code=404` ensures the response matches that documentation\u202f[1][4].",
+    "level": "medium",
+    "confidence": 0.5,
+    "support": 0.5,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes adding a 404 entry with a model to the responses dict, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.81,
+        "writer": 14.46,
+        "judge": 16.99
+      },
+      "tokens": {
+        "writer": {
+          "in": 1422,
+          "out": 434
+        },
+        "judge": {
+          "in": 1422,
+          "out": 434
+        }
+      },
+      "total_tokens": 6553,
+      "total_seconds": 32.26
+    }
+  },
+  {
+    "id": "t029",
+    "question": "How can I return a different status code in a branch using a direct Response?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You can create a response object yourself (e.g.\u202f`JSONResponse`) and set the status code on it, then return that object directly.  \n\n```python\nfrom fastapi import FastAPI, status\nfrom fastapi.responses import JSONResponse\n\napp = FastAPI()\n\n@app.put(\"/items/{item_id}\")\ndef upsert_item(item_id: str):\n    if item_id not in store:\n        # create the item \u2192 return 201\n        store[item_id] = {\"name\": \"new\"}\n        return JSONResponse(content=store[item_id],\n                            status_code=status.HTTP_201_CREATED)   # \u2190 different code\n    # existing item \u2192 return 200\n    return JSONResponse(content=store[item_id],\n                        status_code=status.HTTP_200_OK)\n```\n\nThe key is to return a `Response` (such as `JSONResponse`) directly and specify the desired `status_code` when constructing it (or set `response.status_code` before returning)\u202f[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes returning a JSONResponse with a specific status_code, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.73,
+        "writer": 13.64,
+        "judge": 18.85
+      },
+      "tokens": {
+        "writer": {
+          "in": 1853,
+          "out": 515
+        },
+        "judge": {
+          "in": 1853,
+          "out": 515
+        }
+      },
+      "total_tokens": 7366,
+      "total_seconds": 33.22
+    }
+  },
+  {
+    "id": "t030",
+    "question": "What does a callable dependency class need so FastAPI can inspect its query parameters?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "A callable dependency class must define a **`__call__`** method that declares the parameters (e.g., query parameters) you want FastAPI to inspect. FastAPI examines the signature of `__call__` to discover additional parameters and sub\u2011dependencies, and it invokes that method when resolving the dependency\u202f[2]. The class\u2019s `__init__` can be used to set up instance data, but FastAPI only looks at the `__call__` signature for the query parameters\u202f[1].",
+    "level": "low",
+    "confidence": 0.33,
+    "support": 0.3333333333333333,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that defining __call__ is required and FastAPI inspects its signature for parameters and sub\u2011dependencies, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.78,
+        "writer": 18.25,
+        "judge": 17.59
+      },
+      "tokens": {
+        "writer": {
+          "in": 1987,
+          "out": 341
+        },
+        "judge": {
+          "in": 1987,
+          "out": 341
+        }
+      },
+      "total_tokens": 7845,
+      "total_seconds": 36.62
+    }
+  },
+  {
+    "id": "t031",
+    "question": "Can FastAPI validate a parameter annotated as a union of several types?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Yes.\u202fFastAPI can validate a request parameter that is annotated as a union of **Pydantic models**.  \nYou declare the parameter with `Annotated` and a `Form` (or other) metadata that includes a `discriminator`; FastAPI will pick the correct model based on the discriminator value and validate the incoming data\u202f[2].  \n\nWhat FastAPI cannot do is validate a union that mixes non\u2011Pydantic types (e.g., `Response | dict`) for a **response model** \u2013 that pattern fails because the annotation is not a single Pydantic type\u202f[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states FastAPI can validate union-annotated parameters, aligning with the reference, and adds extra non\u2011contradictory details.",
+    "stats": {
+      "seconds": {
+        "search": 2.2,
+        "writer": 11.53,
+        "judge": 17.69
+      },
+      "tokens": {
+        "writer": {
+          "in": 1865,
+          "out": 480
+        },
+        "judge": {
+          "in": 1865,
+          "out": 480
+        }
+      },
+      "total_tokens": 7273,
+      "total_seconds": 31.42
+    }
+  },
+  {
+    "id": "t032",
+    "question": "What does FastAPI use to provide validation for standard `dataclass` types?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "FastAPI relies on **Pydantic** to perform validation (as well as serialization and documentation) for standard\u202f`dataclass` types[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states FastAPI uses Pydantic for validation, serialization, and documentation of dataclasses",
+    "stats": {
+      "seconds": {
+        "search": 1.61,
+        "writer": 8.74,
+        "judge": 14.14
+      },
+      "tokens": {
+        "writer": {
+          "in": 1683,
+          "out": 176
+        },
+        "judge": {
+          "in": 1683,
+          "out": 176
+        }
+      },
+      "total_tokens": 5672,
+      "total_seconds": 24.49
+    }
+  },
+  {
+    "id": "t033",
+    "question": "How do I run setup and cleanup logic using an application lifespan?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You define an async context\u2011manager that runs before the app starts handling requests and cleans up after it stops, and pass it to the `FastAPI` constructor via the `lifespan` parameter.  \n\n```python\nfrom contextlib import asynccontextmanager\nfrom fastapi import FastAPI\n\nml_models = {}\n\n@asynccontextmanager\nasync def lifespan(app: FastAPI):\n    # setup \u2013 run once before any request is received\n    ml_models[\"answer_to_everything\"] = fake_answer_to_everything_ml_model\n    yield\n    # cleanup \u2013 run once after the app shuts down\n    ml_models.clear()\n\napp = FastAPI(lifespan=lifespan)\n```  \n\nThe code before `yield` is executed at startup (setup), and the code after `yield` is executed at shutdown (cleanup)\u202f[1][2].  ",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes passing an async context manager to the lifespan parameter with setup before yield and cleanup after yield, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.73,
+        "writer": 12.13,
+        "judge": 17.93
+      },
+      "tokens": {
+        "writer": {
+          "in": 1820,
+          "out": 310
+        },
+        "judge": {
+          "in": 1820,
+          "out": 310
+        }
+      },
+      "total_tokens": 6872,
+      "total_seconds": 31.79
+    }
+  },
+  {
+    "id": "t034",
+    "question": "What is a callback URL used to describe in OpenAPI?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "In OpenAPI a callback URL is used to document the **external API** that your service will call back \u2013 i.e., the endpoint, its path operation, the request body it should receive and the response it should return[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that callbacks describe the external API endpoint the server will call back, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.83,
+        "writer": 14.04,
+        "judge": 16.96
+      },
+      "tokens": {
+        "writer": {
+          "in": 1961,
+          "out": 312
+        },
+        "judge": {
+          "in": 1961,
+          "out": 312
+        }
+      },
+      "total_tokens": 6817,
+      "total_seconds": 32.83
+    }
+  },
+  {
+    "id": "t035",
+    "question": "How can I document an outbound webhook operation in OpenAPI?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You define the webhook as a regular FastAPI operation but on the\u202f`app.webhooks`\u202frouter instead of on the normal path router.  \nCreate the router (it\u2019s just an\u202f`APIRouter`) and use the usual decorators, e.g.:\n\n```python\n@app.webhooks.post(\"new\u2011subscription\")\ndef new_subscription(body: Subscription):\n    \"\"\"When a new user subscribes we will POST this data to the URL the user registered.\"\"\"\n```\n\nThe decorator lets you specify the webhook name, the HTTP method (POST, PUT, etc.) and the request body model, and FastAPI adds the definition to the OpenAPI schema and the automatic docs UI\u202f[3][4].  \nWebhooks are supported in OpenAPI\u202f3.1.0+ and FastAPI\u202f0.99.0+, so the generated OpenAPI document will include the outbound webhook operation for consumers to implement\u202f[1][3].",
+    "level": "low",
+    "confidence": 0.0,
+    "support": 0.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student describes declaring webhook operations on the FastAPI app so they appear in the OpenAPI schema, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.88,
+        "writer": 10.33,
+        "judge": 19.48
+      },
+      "tokens": {
+        "writer": {
+          "in": 1629,
+          "out": 395
+        },
+        "judge": {
+          "in": 1629,
+          "out": 395
+        }
+      },
+      "total_tokens": 7227,
+      "total_seconds": 31.69
+    }
+  },
+  {
+    "id": "t036",
+    "question": "What does the guide recommend using to generate a TypeScript client?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "The guide recommends using **Hey\u202fAPI** (via the `@hey-api/openapi\u2011ts` tool) to generate a TypeScript client from the FastAPI OpenAPI schema[2]. You run it with npx, e.g.:\n\n```sh\nnpx @hey-api/openapi-ts -i http://localhost:8000/openapi.json -o src/client\n```[4].",
+    "level": "low",
+    "confidence": 0.0,
+    "support": 0.0,
+    "verdict": "wrong",
+    "score": 0.0,
+    "grader_reason": "Student mentions a specific tool (Hey API) not referenced; reference only says the guide uses the documented TypeScript generator.",
+    "stats": {
+      "seconds": {
+        "search": 2.22,
+        "writer": 0.74,
+        "judge": 1.96
+      },
+      "tokens": {
+        "writer": {
+          "in": 1603,
+          "out": 208
+        },
+        "judge": {
+          "in": 1603,
+          "out": 208
+        }
+      },
+      "total_tokens": 6023,
+      "total_seconds": 4.92
+    }
+  },
+  {
+    "id": "t037",
+    "question": "How are bytes represented in JSON by the documented encoder?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Bytes are encoded as Base64 strings in the JSON produced by FastAPI\u2019s documented encoder\u202f[3][5].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that bytes are represented as Base64 strings in the documented JSON encoder.",
+    "stats": {
+      "seconds": {
+        "search": 1.41,
+        "writer": 0.79,
+        "judge": 3.08
+      },
+      "tokens": {
+        "writer": {
+          "in": 1579,
+          "out": 102
+        },
+        "judge": {
+          "in": 1579,
+          "out": 102
+        }
+      },
+      "total_tokens": 5717,
+      "total_seconds": 5.28
+    }
+  },
+  {
+    "id": "t038",
+    "question": "Can I use an ASGI middleware written for another framework with FastAPI?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Yes. Because FastAPI is built on Starlette and follows the ASGI specification, you can use any ASGI\u2011compatible middleware\u2014even one written for another framework\u2014provided it follows the ASGI spec\u202f[1][3].",
+    "level": "low",
+    "confidence": 0.0,
+    "support": 0.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the yes and adds that any ASGI\u2011compatible middleware works if it follows the spec, matching the reference",
+    "stats": {
+      "seconds": {
+        "search": 1.76,
+        "writer": 7.91,
+        "judge": 14.37
+      },
+      "tokens": {
+        "writer": {
+          "in": 1527,
+          "out": 164
+        },
+        "judge": {
+          "in": 1527,
+          "out": 164
+        }
+      },
+      "total_tokens": 5752,
+      "total_seconds": 24.04
+    }
+  },
+  {
+    "id": "t039",
+    "question": "How can I set a cookie while returning a normal dictionary?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add a `Response` parameter to the path\u2011operation function, set the cookie on that temporary response, and then return the normal dictionary. FastAPI will keep the cookie while returning the dict (and will still apply any `response_model`).  \n\n```python\nfrom fastapi import FastAPI, Response\n\napp = FastAPI()\n\n@app.post(\"/cookie-and-object/\")\ndef create_cookie(response: Response):\n    response.set_cookie(key=\"fakesession\", value=\"fake-cookie-session-value\")\n    return {\"message\": \"Come to the dark side, we have cookies\"}\n```\n\nThe `response.set_cookie` call adds the cookie, and the function returns the regular dict as the response body.\u202f[2][1]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the reference solution accurately without contradiction",
+    "stats": {
+      "seconds": {
+        "search": 1.52,
+        "writer": 6.38,
+        "judge": 13.97
+      },
+      "tokens": {
+        "writer": {
+          "in": 1331,
+          "out": 299
+        },
+        "judge": {
+          "in": 1331,
+          "out": 299
+        }
+      },
+      "total_tokens": 5490,
+      "total_seconds": 21.87
+    }
+  },
+  {
+    "id": "t040",
+    "question": "When I return JSONResponse directly, does FastAPI convert it through response_model?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "No. When you return a\u202f`JSONResponse` (or any `Response` subclass) directly, FastAPI does **not** apply the declared `response_model` \u2013 it skips the automatic Pydantic conversion and uses the response exactly as you built it[2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that returning JSONResponse bypasses response_model conversion, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.66,
+        "writer": 10.07,
+        "judge": 16.57
+      },
+      "tokens": {
+        "writer": {
+          "in": 1748,
+          "out": 291
+        },
+        "judge": {
+          "in": 1748,
+          "out": 291
+        }
+      },
+      "total_tokens": 6301,
+      "total_seconds": 28.3
+    }
+  },
+  {
+    "id": "t041",
+    "question": "How can a browser frontend read a custom response header?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "A browser can only see custom response headers if they are exposed through CORS.\u202fAdd the header name to the\u202f`expose_headers`\u202fparameter of the CORS middleware configuration, then the frontend JavaScript can read it (e.g.,\u202f`response.headers.get('X\u2011My\u2011Header')`).\u202f[2][3]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the key step of adding the header to expose_headers, matching reference",
+    "stats": {
+      "seconds": {
+        "search": 6.12,
+        "writer": 1.17,
+        "judge": 1.5
+      },
+      "tokens": {
+        "writer": {
+          "in": 1515,
+          "out": 193
+        },
+        "judge": {
+          "in": 1515,
+          "out": 193
+        }
+      },
+      "total_tokens": 5486,
+      "total_seconds": 8.79
+    }
+  },
+  {
+    "id": "t042",
+    "question": "How can I stream a large file without reading the whole file into memory first?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You can return a response that yields the file\u2019s bytes chunk\u2011by\u2011chunk instead of loading the whole file into memory.  \n\n```python\nfrom collections.abc import Iterable\nfrom fastapi import FastAPI\nfrom fastapi.responses import StreamingResponse\n\napp = FastAPI()\n\ndef file_chunks() -> Iterable[bytes]:\n    with open(\"large\u2011video\u2011file.mp4\", \"rb\") as f:\n        for chunk in iter(lambda: f.read(8192), b\"\"):\n            yield chunk\n\n@app.get(\"/stream\")\ndef stream_file():\n    return StreamingResponse(file_chunks(), media_type=\"video/mp4\")\n```  \nThe `StreamingResponse` with `yield` streams each chunk as it is read, so the file is never fully loaded into memory\u202f[1].\n\nFastAPI also provides a built\u2011in response that does this for you: `FileResponse`. It asynchronously streams the file directly from disk, adding appropriate headers, without reading the entire file first\u202f[5].\n\n```python\nfrom fastapi import FastAPI\nfrom fastapi.responses import FileResponse\n\napp = FastAPI()\n\n@app.get(\"/download\")\nasync def download():\n    return FileResponse(\"large-video-file.mp4\")\n```",
+    "level": "medium",
+    "confidence": 0.6,
+    "support": 0.6,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes using a generator with StreamingResponse to stream file chunks without loading the whole file into memory, matching the reference answer.",
+    "stats": {
+      "seconds": {
+        "search": 0.91,
+        "writer": 1.49,
+        "judge": 5.97
+      },
+      "tokens": {
+        "writer": {
+          "in": 1777,
+          "out": 485
+        },
+        "judge": {
+          "in": 1777,
+          "out": 485
+        }
+      },
+      "total_tokens": 7607,
+      "total_seconds": 8.37
+    }
+  },
+  {
+    "id": "t043",
+    "question": "What does strict content type checking protect against?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Strict content\u2011type checking protects against a class of Cross\u2011Site Request Forgery (CSRF) attacks that exploit requests sent without a\u202f`Content-Type` header (e.g., using\u202f`fetch()` with a\u202f`Blob` body) and without authentication credentials[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "wrong",
+    "score": 0.0,
+    "grader_reason": "Student answer focuses on CSRF protection, which is not mentioned in the reference; the reference states the purpose is to reject unexpected or missing content types to avoid parsing as JSON.",
+    "stats": {
+      "seconds": {
+        "search": 0.96,
+        "writer": 14.93,
+        "judge": 21.17
+      },
+      "tokens": {
+        "writer": {
+          "in": 1905,
+          "out": 228
+        },
+        "judge": {
+          "in": 1905,
+          "out": 228
+        }
+      },
+      "total_tokens": 6543,
+      "total_seconds": 37.06
+    }
+  },
+  {
+    "id": "t044",
+    "question": "How do I mount a separate FastAPI app under a path such as /subapi?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create the main FastAPI instance, create the sub\u2011application, then mount the sub\u2011app at the desired prefix:\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()          # main application\n\nsubapi = FastAPI()       # the separate app to mount\n\n@subapi.get(\"/sub\")\ndef read_sub():\n    return {\"message\": \"Hello World from sub API\"}\n\napp.mount(\"/subapi\", subapi)   # mount it under /subapi\n```  \n\nThis registers all routes of `subapi` under the `/subapi` path of the main app[2][5].",
+    "level": "medium",
+    "confidence": 0.5,
+    "support": 0.5,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states and demonstrates using app.mount('/subapi', subapi) to mount the sub\u2011application.",
+    "stats": {
+      "seconds": {
+        "search": 0.94,
+        "writer": 16.02,
+        "judge": 11.18
+      },
+      "tokens": {
+        "writer": {
+          "in": 1521,
+          "out": 222
+        },
+        "judge": {
+          "in": 1521,
+          "out": 222
+        }
+      },
+      "total_tokens": 5838,
+      "total_seconds": 28.14
+    }
+  },
+  {
+    "id": "t045",
+    "question": "How do I replace a dependency only during a test?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Add the override at the start of the test, run the request, then clear it after the test finishes.  \n\n```python\n# test file\nfrom fastapi.testclient import TestClient\nfrom myapp import app, common_parameters   # the original dependency\n\nasync def override_dependency(q: str | None = None):\n    return {\"q\": q, \"skip\": 5, \"limit\": 10}\n\ndef test_override():\n    # replace the dependency only for this test\n    app.dependency_overrides[common_parameters] = override_dependency   # [3]\n\n    client = TestClient(app)\n    response = client.get(\"/items/\")\n    assert response.status_code == 200\n    assert response.json() == {\n        \"message\": \"Hello Items!\",\n        \"params\": {\"q\": None, \"skip\": 5, \"limit\": 10},\n    }\n\n    # reset overrides so other tests use the real dependency\n    app.dependency_overrides = {}   # [2]\n```",
+    "level": "medium",
+    "confidence": 0.67,
+    "support": 0.6666666666666666,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes setting an entry in app.dependency_overrides to map the original dependency to an override, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.79,
+        "writer": 5.25,
+        "judge": 16.08
+      },
+      "tokens": {
+        "writer": {
+          "in": 1137,
+          "out": 374
+        },
+        "judge": {
+          "in": 1137,
+          "out": 374
+        }
+      },
+      "total_tokens": 5098,
+      "total_seconds": 22.12
+    }
+  },
+  {
+    "id": "t046",
+    "question": "How can a test ensure startup and shutdown events run?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use a `TestClient` as a context manager so that the client starts the app (running the **startup** handlers) when the block is entered and shuts the app down (running the **shutdown** handlers) when the block exits.  \n\n```python\nfrom fastapi import FastAPI\nfrom fastapi.testclient import TestClient\n\napp = FastAPI()\nitems = {}\n\n@app.on_event(\"startup\")\nasync def startup_event():\n    items[\"foo\"] = {\"name\": \"Fighters\"}      # \u2190 runs on startup\n    items[\"bar\"] = {\"name\": \"Tenders\"}\n\n@app.on_event(\"shutdown\")\ndef shutdown_event():\n    items.clear()                            # \u2190 runs on shutdown\n\n@app.get(\"/items/{item_id}\")\nasync def read_items(item_id: str):\n    return items[item_id]\n\ndef test_events():\n    # Before the client starts, nothing is in `items`\n    assert items == {}\n\n    with TestClient(app) as client:          # \u2190 starts the app\n        # Startup has run\n        assert items == {\n            \"foo\": {\"name\": \"Fighters\"},\n            \"bar\": {\"name\": \"Tenders\"},\n        }\n\n        response = client.get(\"/items/foo\")\n        assert response.status_code == 200\n        assert response.json() == {\"name\": \"Fighters\"}\n\n    # Exiting the `with` block shuts the app, so shutdown ran\n    assert items == {}\n```\n\nThe `with TestClient(app)` block triggers the **startup** event when entered and the **shutdown** event when it exits, letting the test verify both phases\u202f[1][2][4].",
+    "level": "medium",
+    "confidence": 0.5,
+    "support": 0.5,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to use TestClient as a context manager to trigger startup and shutdown events, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.83,
+        "writer": 12.76,
+        "judge": 19.94
+      },
+      "tokens": {
+        "writer": {
+          "in": 1620,
+          "out": 611
+        },
+        "judge": {
+          "in": 1620,
+          "out": 611
+        }
+      },
+      "total_tokens": 7083,
+      "total_seconds": 33.53
+    }
+  },
+  {
+    "id": "t047",
+    "question": "How do I test a WebSocket endpoint with the test client?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use FastAPI\u2019s `TestClient` inside a `with` block that opens a WebSocket connection, then interact with the socket just like a real client.\n\n```python\nfrom fastapi.testclient import TestClient\n\nclient = TestClient(app)                     # import and create the client [4]\nwith client.websocket_connect(\"/ws\") as ws:  # open a WebSocket session [2]\n    data = ws.receive_json()                 # receive the JSON message sent by the endpoint\n    assert data == {\"msg\": \"Hello WebSocket\"}  # verify the payload\n```\n\nThe `websocket_connect` method creates the connection, and the returned `ws` object provides methods such as `receive_json()`, `receive_text()`, `send_json()`, etc., which you can use to test the endpoint\u2019s behavior. [1][2]",
+    "level": "medium",
+    "confidence": 0.67,
+    "support": 0.6666666666666666,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly describes using client.websocket_connect() in a with block and sending/receiving messages, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.93,
+        "writer": 13.18,
+        "judge": 15.27
+      },
+      "tokens": {
+        "writer": {
+          "in": 1207,
+          "out": 391
+        },
+        "judge": {
+          "in": 1207,
+          "out": 391
+        }
+      },
+      "total_tokens": 5521,
+      "total_seconds": 29.38
+    }
+  },
+  {
+    "id": "t048",
+    "question": "What do I give up if I read the request body directly instead of declaring it as a model?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "If you read the request body yourself (e.g., via `await request.body()`), you lose FastAPI\u2019s automatic features: the payload won\u2019t be **validated**, won\u2019t be **converted** to the declared types, and won\u2019t be **documented in the OpenAPI schema** (so the interactive docs won\u2019t show it)\u202f[2]. In other words, you give up the built\u2011in validation, conversion, and documentation that FastAPI provides when you declare a Pydantic model as the request body\u202f[1][2].",
+    "level": "medium",
+    "confidence": 0.75,
+    "support": 0.75,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly lists that reading the request body directly forfeits validation, conversion, and documentation, matching the reference answer.",
+    "stats": {
+      "seconds": {
+        "search": 0.8,
+        "writer": 14.15,
+        "judge": 18.86
+      },
+      "tokens": {
+        "writer": {
+          "in": 1878,
+          "out": 316
+        },
+        "judge": {
+          "in": 1878,
+          "out": 316
+        }
+      },
+      "total_tokens": 7334,
+      "total_seconds": 33.81
+    }
+  },
+  {
+    "id": "t049",
+    "question": "How do I host a Flask application inside my FastAPI app under /legacy?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create the Flask app, import `WSGIMiddleware` from **a2wsgi**, wrap the Flask app with it, and mount it on the desired path (e.g.,\u202f`/legacy`) in the FastAPI instance.\n\n```python\n# install the middleware package\n# uv add a2wsgi\n\nfrom a2wsgi import WSGIMiddleware          # [4]\nfrom fastapi import FastAPI\nfrom flask import Flask, request\nfrom markupsafe import escape\n\n# Flask application\nflask_app = Flask(__name__)\n\n@flask_app.route(\"/\")\ndef flask_main():\n    name = request.args.get(\"name\", \"World\")\n    return f\"Hello, {escape(name)} from Flask!\"\n\n# FastAPI application\napp = FastAPI()\n\n# mount Flask under /legacy\napp.mount(\"/legacy\", WSGIMiddleware(flask_app))   # [1][4]\n```\n\nNow any request to `http://<host>/legacy/\u2026` is handled by the Flask app, while all other routes are served by FastAPI. This follows the same pattern shown for mounting under `/v1` in the examples.",
+    "level": "high",
+    "confidence": 0.8,
+    "support": 0.8,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats all key steps: install a2wsgi, import WSGIMiddleware, wrap Flask app, mount under /legacy",
+    "stats": {
+      "seconds": {
+        "search": 0.81,
+        "writer": 10.19,
+        "judge": 17.22
+      },
+      "tokens": {
+        "writer": {
+          "in": 1401,
+          "out": 406
+        },
+        "judge": {
+          "in": 1401,
+          "out": 406
+        }
+      },
+      "total_tokens": 6338,
+      "total_seconds": 28.22
+    }
+  },
+  {
+    "id": "t050",
+    "question": "How can I serve Swagger UI JavaScript and CSS from my own host?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "1. Disable the built\u2011in docs so they don\u2019t use the CDN\u202f[1].  \n2. Mount a static files directory that contains the Swagger UI assets, e.g.:\n\n```python\napp.mount(\"/static\", StaticFiles(directory=\"static\"), name=\"static\")\n```  \n\n[2]  \n\n3. Add a custom docs endpoint that returns the HTML generated by FastAPI\u2019s helper, passing the URLs of the locally\u2011served files:\n\n```python\n@app.get(\"/docs\", include_in_schema=False)\nasync def custom_swagger_ui_html():\n    return get_swagger_ui_html(\n        openapi_url=app.openapi_url,\n        title=app.title + \" - Swagger UI\",\n        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,\n        swagger_js_url=\"/static/swagger-ui-bundle.js\",\n        swagger_css_url=\"/static/swagger-ui.css\",\n    )\n```  \n\n[2][4]  \n\nWith these steps the Swagger UI JavaScript and CSS are served from your own host instead of the default CDN.",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student describes overriding the Swagger UI asset URLs to point to locally served files, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.96,
+        "writer": 13.45,
+        "judge": 13.56
+      },
+      "tokens": {
+        "writer": {
+          "in": 1468,
+          "out": 426
+        },
+        "judge": {
+          "in": 1468,
+          "out": 426
+        }
+      },
+      "total_tokens": 6348,
+      "total_seconds": 27.97
+    }
+  },
+  {
+    "id": "t051",
+    "question": "Which class should I subclass to customize request handling for a route?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You should subclass\u202f`fastapi.routing.APIRoute`\u202f(e.g., create a custom `GzipRoute` that inherits from `APIRoute`).\u202f[1][2][5]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly identifies subclassing APIRoute, matching reference",
+    "stats": {
+      "seconds": {
+        "search": 0.81,
+        "writer": 9.71,
+        "judge": 12.06
+      },
+      "tokens": {
+        "writer": {
+          "in": 1589,
+          "out": 138
+        },
+        "judge": {
+          "in": 1589,
+          "out": 138
+        }
+      },
+      "total_tokens": 5301,
+      "total_seconds": 22.58
+    }
+  },
+  {
+    "id": "t052",
+    "question": "Can a project temporarily mix Pydantic v1 and v2 models?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Yes. FastAPI\u202f0.119.0\u202f\u2013\u202f0.127.x allowed you to use both Pydantic\u202fv1 and\u202fv2 models in the same application, providing temporary mixed\u2011model support that was removed in FastAPI\u202f0.128.0\u202f[1][3][5].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that temporary mixing is possible, aligning with the reference about using compatibility models, and adds non\u2011contradictory details.",
+    "stats": {
+      "seconds": {
+        "search": 1.03,
+        "writer": 16.37,
+        "judge": 19.33
+      },
+      "tokens": {
+        "writer": {
+          "in": 2083,
+          "out": 448
+        },
+        "judge": {
+          "in": 2083,
+          "out": 448
+        }
+      },
+      "total_tokens": 7947,
+      "total_seconds": 36.73
+    }
+  },
+  {
+    "id": "t053",
+    "question": "Why can a field be optional in an input schema but required in an output schema?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "A field that has a default value (e.g., `description: str | None = None`) is optional when the model is used for **input** because the client may omit it and the server will fill in the default\u202f`None`\u202fvalue\u202f[1].  \nWhen the same model is used for **output**, FastAPI (via Pydantic\u202fv2) knows the field will always be present in the response\u2014either with a real value or with the default\u202f`null`. Therefore the OpenAPI schema marks the field as **required** so that generated clients can rely on its existence\u202f[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly explains that defaults make fields optional for input but required for output, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.92,
+        "writer": 8.06,
+        "judge": 12.44
+      },
+      "tokens": {
+        "writer": {
+          "in": 1321,
+          "out": 244
+        },
+        "judge": {
+          "in": 1321,
+          "out": 244
+        }
+      },
+      "total_tokens": 5060,
+      "total_seconds": 22.42
+    }
+  },
+  {
+    "id": "t054",
+    "question": "What status code do FastAPI integrated security tools return after failed authentication, and what header accompanies it?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "FastAPI\u2019s built\u2011in security utilities now respond with **HTTP\u202f401\u202fUnauthorized** when authentication fails, and they include a **`WWW-Authenticate`** header in the response\u202f[1][2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states the 401 Unauthorized status and the WWW-Authenticate header, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.14,
+        "writer": 11.87,
+        "judge": 14.02
+      },
+      "tokens": {
+        "writer": {
+          "in": 1644,
+          "out": 177
+        },
+        "judge": {
+          "in": 1644,
+          "out": 177
+        }
+      },
+      "total_tokens": 5631,
+      "total_seconds": 27.03
+    }
+  },
+  {
+    "id": "t055",
+    "question": "Where should I cache a customized OpenAPI schema after generating it?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Cache the customized schema in the FastAPI app\u2019s\u202f`.openapi_schema` attribute, using it as a \u201ccache\u201d for the generated OpenAPI schema.\u202f[1]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to store the schema in app.openapi_schema for reuse",
+    "stats": {
+      "seconds": {
+        "search": 0.84,
+        "writer": 10.79,
+        "judge": 11.47
+      },
+      "tokens": {
+        "writer": {
+          "in": 1311,
+          "out": 171
+        },
+        "judge": {
+          "in": 1311,
+          "out": 171
+        }
+      },
+      "total_tokens": 4801,
+      "total_seconds": 23.1
+    }
+  },
+  {
+    "id": "t056",
+    "question": "How do I remove a dependency override after a test?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "You can clear all overrides by resetting the app\u2019s override dictionary to an empty dict, e.g.:\n\n```python\napp.dependency_overrides = {}\n```\n\nDoing this at the end of the test (or after the test function) removes the override you set earlier[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to clear app.dependency_overrides after the test",
+    "stats": {
+      "seconds": {
+        "search": 0.86,
+        "writer": 10.71,
+        "judge": 11.53
+      },
+      "tokens": {
+        "writer": {
+          "in": 1264,
+          "out": 182
+        },
+        "judge": {
+          "in": 1264,
+          "out": 182
+        }
+      },
+      "total_tokens": 4580,
+      "total_seconds": 23.1
+    }
+  },
+  {
+    "id": "t057",
+    "question": "What does a `0.x.x` version indicate about possible FastAPI updates?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "A `0.x.x` version means the package is still pre\u20111.0, so any new version may introduce breaking changes\u202f\u2014\u202fupdates are not guaranteed to be backward\u2011compatible[1][3]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that 0.x.x versions may include breaking changes and are not guaranteed backward\u2011compatible, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.0,
+        "writer": 13.82,
+        "judge": 15.29
+      },
+      "tokens": {
+        "writer": {
+          "in": 1764,
+          "out": 197
+        },
+        "judge": {
+          "in": 1764,
+          "out": 197
+        }
+      },
+      "total_tokens": 6087,
+      "total_seconds": 30.11
+    }
+  },
+  {
+    "id": "t058",
+    "question": "How can I delay checking for the built frontend directory until the first request?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Set `check_dir=False` when you register the frontend. This tells FastAPI not to verify the directory at app startup; it will only check (and raise an error if missing) when the first request is handled[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the key fact of setting check_dir=False to defer directory checking until first request",
+    "stats": {
+      "seconds": {
+        "search": 0.94,
+        "writer": 9.08,
+        "judge": 13.28
+      },
+      "tokens": {
+        "writer": {
+          "in": 1323,
+          "out": 219
+        },
+        "judge": {
+          "in": 1323,
+          "out": 219
+        }
+      },
+      "total_tokens": 4781,
+      "total_seconds": 23.3
+    }
+  },
+  {
+    "id": "t059",
+    "question": "How do I deploy an app without manually specifying its FastAPI object to the cloud CLI?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Run the deployment command:\n\n```console\n$ uv run fastapi deploy\n```\n\nThe FastAPI Cloud CLI automatically detects the FastAPI application in your project, so you don\u2019t need to manually pass the `FastAPI` object when deploying it\u202f[1][3].",
+    "level": "medium",
+    "confidence": 0.67,
+    "support": 0.6666666666666666,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student states the CLI auto-detects the FastAPI app and no manual specification is needed, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.06,
+        "writer": 14.56,
+        "judge": 13.35
+      },
+      "tokens": {
+        "writer": {
+          "in": 1809,
+          "out": 177
+        },
+        "judge": {
+          "in": 1809,
+          "out": 177
+        }
+      },
+      "total_tokens": 6291,
+      "total_seconds": 28.97
+    }
+  },
+  {
+    "id": "t060",
+    "question": "Which operational concerns does the deployment overview list besides running the server?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "The deployment overview lists these operational concerns in addition to simply running the server:\n\n- Security\u202f\u2013\u202fHTTPS[1]  \n- Running on startup[1]  \n- Restarts[1]  \n- Replication (the number of processes running)[1]  \n- Memory[1]  \n- Previous steps before starting[1]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student includes all listed concerns (startup, restarts, replication, memory, pre-start steps) and adds non-contradictory extra detail.",
+    "stats": {
+      "seconds": {
+        "search": 0.59,
+        "writer": 12.02,
+        "judge": 13.47
+      },
+      "tokens": {
+        "writer": {
+          "in": 1343,
+          "out": 241
+        },
+        "judge": {
+          "in": 1343,
+          "out": 241
+        }
+      },
+      "total_tokens": 5010,
+      "total_seconds": 26.08
+    }
+  },
+  {
+    "id": "t061",
+    "question": "Which command-line option starts several worker processes?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "The `--workers` command\u2011line option starts several worker processes\u202f[1][2][3].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly identifies the --workers option as the one that starts multiple worker processes.",
+    "stats": {
+      "seconds": {
+        "search": 0.66,
+        "writer": 9.5,
+        "judge": 13.13
+      },
+      "tokens": {
+        "writer": {
+          "in": 1542,
+          "out": 84
+        },
+        "judge": {
+          "in": 1542,
+          "out": 84
+        }
+      },
+      "total_tokens": 5078,
+      "total_seconds": 23.29
+    }
+  },
+  {
+    "id": "t062",
+    "question": "Why does adding worker processes increase memory use?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Adding worker processes creates additional operating\u2011system processes, and each process has its own separate memory space. When your code loads a large object (e.g., a machine\u2011learning model) into a variable, that object is stored in the RAM of the process that loads it, and the memory is **not shared** with other processes\u202f[1]. Consequently, every worker process will load its own copy of the model (or other large data), so the total RAM consumption grows roughly by the number of workers\u202f[2]. In short, each extra worker adds an equivalent amount of memory because processes do not share RAM\u202f[1][2][3].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly explains that each worker is a separate process with its own memory, so memory usage scales with number of workers, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.61,
+        "writer": 13.96,
+        "judge": 13.35
+      },
+      "tokens": {
+        "writer": {
+          "in": 1483,
+          "out": 267
+        },
+        "judge": {
+          "in": 1483,
+          "out": 267
+        }
+      },
+      "total_tokens": 6056,
+      "total_seconds": 27.92
+    }
+  },
+  {
+    "id": "t063",
+    "question": "If a response model contains a set of strings, how does FastAPI represent that in JSON?",
+    "answerable": true,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "wrong",
+    "score": 0.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 0.77,
+        "writer": 9.92
+      },
+      "tokens": {
+        "writer": {
+          "in": 1756,
+          "out": 179
+        },
+        "judge": {
+          "in": 1756,
+          "out": 179
+        }
+      },
+      "total_tokens": 3870,
+      "total_seconds": 10.69
+    }
+  },
+  {
+    "id": "t064",
+    "question": "Can I add a shared prefix when including a router instead of repeating it in every route?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Yes. You can set a shared `prefix` when you include a router (e.g., via `app.include_router()` or `router.include_router()`) instead of adding the prefix to each individual path operation\u202f[4][1].",
+    "level": "low",
+    "confidence": 0.0,
+    "support": 0.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that a shared prefix can be set via include_router, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.73,
+        "writer": 11.66,
+        "judge": 12.68
+      },
+      "tokens": {
+        "writer": {
+          "in": 1464,
+          "out": 155
+        },
+        "judge": {
+          "in": 1464,
+          "out": 155
+        }
+      },
+      "total_tokens": 5293,
+      "total_seconds": 25.07
+    }
+  },
+  {
+    "id": "t065",
+    "question": "When are BackgroundTasks executed relative to the response?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "BackgroundTasks are run **after the response has been sent** to the client\u202f[1][2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that BackgroundTasks run after the response is sent, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.69,
+        "writer": 7.84,
+        "judge": 9.92
+      },
+      "tokens": {
+        "writer": {
+          "in": 1292,
+          "out": 149
+        },
+        "judge": {
+          "in": 1292,
+          "out": 149
+        }
+      },
+      "total_tokens": 4395,
+      "total_seconds": 18.45
+    }
+  },
+  {
+    "id": "t066",
+    "question": "Why use jsonable_encoder before storing data in a database that expects JSON-compatible values?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "`jsonable_encoder` converts objects such as Pydantic models and non\u2011JSON types (e.g.,\u202f`datetime`,\u202f`UUID`) into plain Python data structures (`dict`, `list`, `str`, \u2026) that are JSON\u2011compatible\u202f\u2014\u202ffor example, turning a `datetime` into its ISO\u2011format string\u202f[2][4].  \nSince a database that only accepts JSON data cannot store those original Python objects, you must run the data through `jsonable_encoder` first so the stored value is a JSON\u2011compatible dict (or other basic type) that the database can handle\u202f[1][4].",
+    "level": "low",
+    "confidence": 0.33,
+    "support": 0.3333333333333333,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that jsonable_encoder converts Pydantic models and non\u2011JSON types like datetime into JSON\u2011compatible structures for storage in a JSON\u2011compatible database, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.08,
+        "writer": 13.27,
+        "judge": 16.72
+      },
+      "tokens": {
+        "writer": {
+          "in": 1816,
+          "out": 287
+        },
+        "judge": {
+          "in": 1816,
+          "out": 287
+        }
+      },
+      "total_tokens": 7172,
+      "total_seconds": 31.07
+    }
+  },
+  {
+    "id": "t067",
+    "question": "Why should I raise an HTTPException instead of returning it from a route?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Because `HTTPException` is a normal Python exception, you must **raise** it\u2014not return it\u2014so that FastAPI can abort the current request and immediately generate the proper error response. Raising the exception stops the rest of the path\u2011operation code (or any calling utility function) from running and lets FastAPI send the HTTP error to the client, whereas returning an `HTTPException` would not trigger this error\u2011handling behavior.\u202f[1][4]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that raising HTTPException stops execution and sends the error response immediately, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.73,
+        "writer": 11.0,
+        "judge": 12.95
+      },
+      "tokens": {
+        "writer": {
+          "in": 1285,
+          "out": 222
+        },
+        "judge": {
+          "in": 1285,
+          "out": 222
+        }
+      },
+      "total_tokens": 4960,
+      "total_seconds": 24.68
+    }
+  },
+  {
+    "id": "t068",
+    "question": "Which request-like type works for a dependency used by both HTTP and WebSocket routes?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use the `HTTPConnection` type for a dependency that should work with both HTTP and WebSocket routes[1][2]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the key fact that HTTPConnection is the type to use for dependencies supporting both HTTP and WebSocket routes.",
+    "stats": {
+      "seconds": {
+        "search": 0.93,
+        "writer": 8.75,
+        "judge": 10.87
+      },
+      "tokens": {
+        "writer": {
+          "in": 1369,
+          "out": 131
+        },
+        "judge": {
+          "in": 1369,
+          "out": 131
+        }
+      },
+      "total_tokens": 4637,
+      "total_seconds": 20.55
+    }
+  },
+  {
+    "id": "t069",
+    "question": "How do I read a query parameter whose external name differs from my Python variable name?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use FastAPI\u2019s `alias` argument of `Query` (or `Path`) to map the external name to a valid Python variable name.  \nDeclare the parameter with `Query(alias=\"item\u2011query\")` (often inside `Annotated`) and FastAPI will read the value from `?item-query=\u2026` while you keep a Python\u2011compatible variable name, e.g.:\n\n```python\nfrom typing import Annotated\n\nfrom fastapi import FastAPI, Query\n\napp = FastAPI()\n\n\n@app.get(\"/items/\")\nasync def read_items(\n    q: Annotated[str | None, Query(alias=\"item-query\")] = None\n):\n    results = {\"items\": [{\"item_id\": \"Foo\"}, {\"item_id\": \"Bar\"}]}\n    if q:\n        results.update({\"q\": q})\n    return results\n```\n\nThe `alias=\"item-query\"` tells FastAPI to look for the query parameter named `item-query` in the URL, even though the function parameter is called `q` (or any valid Python identifier)[1].",
+    "level": "high",
+    "confidence": 0.8,
+    "support": 0.8,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to set the parameter's alias to the external name, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.95,
+        "writer": 14.25,
+        "judge": 16.69
+      },
+      "tokens": {
+        "writer": {
+          "in": 1815,
+          "out": 322
+        },
+        "judge": {
+          "in": 1815,
+          "out": 322
+        }
+      },
+      "total_tokens": 7271,
+      "total_seconds": 31.89
+    }
+  },
+  {
+    "id": "t070",
+    "question": "How can I read the caller\u2019s IP address from the request?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Declare a `Request` parameter in your path operation and read the client\u2019s host from `request.client.host`\u202f\u2014\u202fthat gives the caller\u2019s IP address[1].\n\n```python\nfrom fastapi import FastAPI, Request\n\napp = FastAPI()\n\n\n@app.get(\"/items/{item_id}\")\ndef read_root(item_id: str, request: Request):\n    client_host = request.client.host\n    return {\"client_host\": client_host, \"item_id\": item_id}\n```[1]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to use request.client.host to get the caller's IP",
+    "stats": {
+      "seconds": {
+        "search": 0.97,
+        "writer": 12.02,
+        "judge": 14.91
+      },
+      "tokens": {
+        "writer": {
+          "in": 1646,
+          "out": 254
+        },
+        "judge": {
+          "in": 1646,
+          "out": 254
+        }
+      },
+      "total_tokens": 5796,
+      "total_seconds": 27.9
+    }
+  },
+  {
+    "id": "t071",
+    "question": "How do I set the Content-Type for a custom response class?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Create a subclass of\u202f`Response` (or any FastAPI response class) and give it a\u202f`media_type`\u202fattribute with the MIME type you want. FastAPI uses that attribute to set the **Content\u2011Type** header when the response is returned[1].  \n\n```python\nfrom fastapi import FastAPI, Response\n\nclass MyXMLResponse(Response):\n    media_type = \"application/xml\"      # \u2190 sets Content\u2011Type\n\napp = FastAPI()\n\n@app.get(\"/\", response_class=MyXMLResponse)\nasync def read_root():\n    return \"<root>Hello</root>\"\n```\n\nAlternatively, if you receive a `Response` object as a parameter, you can set the header manually:\n\n```python\nfrom fastapi import FastAPI, Response\n\napp = FastAPI()\n\n@app.get(\"/\")\nasync def read_root(response: Response):\n    response.headers[\"Content-Type\"] = \"application/xml\"\n    return \"<root>Hello</root>\"\n```\n\nBoth approaches let you control the **Content\u2011Type** for a custom response class[4].",
+    "level": "medium",
+    "confidence": 0.5,
+    "support": 0.5,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that setting the response class's media_type sets the Content-Type, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.87,
+        "writer": 6.35,
+        "judge": 17.31
+      },
+      "tokens": {
+        "writer": {
+          "in": 1557,
+          "out": 484
+        },
+        "judge": {
+          "in": 1557,
+          "out": 484
+        }
+      },
+      "total_tokens": 6692,
+      "total_seconds": 24.53
+    }
+  },
+  {
+    "id": "t072",
+    "question": "How can I move the ReDoc documentation page to a different URL?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Set the `redoc_url` parameter when you create the\u202f`FastAPI`\u202finstance to the path you want, e.g.:\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI(redoc_url=\"/my-redoc\")   # ReDoc will be served at /my-redoc\n```\n\nThe `redoc_url` argument controls where the ReDoc UI is mounted; changing it moves the page to a different URL, and setting it to\u202f`None` disables ReDoc entirely[1].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that setting the redoc_url parameter when creating the FastAPI app changes the ReDoc documentation URL, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.08,
+        "writer": 11.03,
+        "judge": 14.21
+      },
+      "tokens": {
+        "writer": {
+          "in": 1405,
+          "out": 341
+        },
+        "judge": {
+          "in": 1405,
+          "out": 341
+        }
+      },
+      "total_tokens": 5624,
+      "total_seconds": 26.32
+    }
+  },
+  {
+    "id": "t073",
+    "question": "How can an SSE event include an explicit ID or retry interval?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "An SSE event can carry an explicit `id` or a `retry` interval by yielding a\u202f`ServerSentEvent` and setting its `id` and/or `retry` arguments. For example:\n\n```python\nyield ServerSentEvent(data=item, event=\"item_update\", id=str(i + 1), retry=5000)\n```\n\nor simply:\n\n```python\nyield ServerSentEvent(data=item, id=str(i))\n```\n\nThese fields are added to the event\u2019s text block, allowing the client to identify the event and specify how long to wait before reconnecting.\u202f[2][4]",
+    "level": "medium",
+    "confidence": 0.57,
+    "support": 0.5714285714285714,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that yielding ServerSentEvent objects with id/retry fields provides explicit ID or retry interval, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.28,
+        "writer": 10.83,
+        "judge": 17.63
+      },
+      "tokens": {
+        "writer": {
+          "in": 1697,
+          "out": 233
+        },
+        "judge": {
+          "in": 1697,
+          "out": 233
+        }
+      },
+      "total_tokens": 7142,
+      "total_seconds": 29.74
+    }
+  },
+  {
+    "id": "t074",
+    "question": "How can I run my FastAPI app in an IDE debugger and stop at breakpoints?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Run the file that contains your FastAPI app directly from the IDE\u2019s debugger instead of starting\u202fuvicorn\u202ffrom the command line.  \n\n* In **PyCharm**, open the **Run** menu, choose **Debug\u2026**, and select your `main.py` (or the file that calls `uvicorn.run`). The server will start and stop at any breakpoints you set[1].  \n* In **VS\u202fCode**, open the **Debug** panel, click **Add configuration\u2026**, pick **Python**, and run the configuration **\u201cPython: Current File (Integrated Terminal)\u201d**. This launches the server and pauses at breakpoints[2].  \n\nMake sure the `uvicorn.run(app, \u2026)` call is guarded by `if __name__ == \"__main__\":` so it executes only when the file is run directly, allowing the debugger to attach[3].",
+    "level": "medium",
+    "confidence": 0.75,
+    "support": 0.75,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to run the FastAPI file (with uvicorn.run) directly in the IDE debugger, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.33,
+        "writer": 10.22,
+        "judge": 20.77
+      },
+      "tokens": {
+        "writer": {
+          "in": 1709,
+          "out": 463
+        },
+        "judge": {
+          "in": 1709,
+          "out": 463
+        }
+      },
+      "total_tokens": 7221,
+      "total_seconds": 32.32
+    }
+  },
+  {
+    "id": "t075",
+    "question": "Does FastAPI need custom instrumentation code to collect HTTP request telemetry?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "No. FastAPI collects HTTP request telemetry automatically and does not require any custom instrumentation code\u202f[1][2]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states FastAPI does not need custom instrumentation and collects telemetry automatically, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.84,
+        "writer": 12.9,
+        "judge": 13.75
+      },
+      "tokens": {
+        "writer": {
+          "in": 1577,
+          "out": 146
+        },
+        "judge": {
+          "in": 1577,
+          "out": 146
+        }
+      },
+      "total_tokens": 5352,
+      "total_seconds": 27.49
+    }
+  },
+  {
+    "id": "t076",
+    "question": "How do I serve index.html when a user opens a client-side route directly?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Use FastAPI\u2019s\u202f`app.frontend()` and set a fallback that returns the\u202f`index.html` file. For example:\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\napp.frontend(\"/\", directory=\"dist\", fallback=\"index.html\")\n```\n\nFastAPI will serve `index.html` for GET/HEAD requests that accept HTML when a user navigates directly to a client\u2011side route such as `/dashboard/settings`\u202f[1].\n\nIn most projects you can omit the explicit `fallback` because the default `fallback=\"auto\"` automatically serves `index.html` for missing browser\u2011navigation paths when an `index.html` file exists (and no `404.html` is present)\u202f[3][4].",
+    "level": "low",
+    "confidence": 0.33,
+    "support": 0.3333333333333333,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to configure the frontend fallback as index.html and that FastAPI serves it for browser navigation requests, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 1.02,
+        "writer": 11.4,
+        "judge": 18.28
+      },
+      "tokens": {
+        "writer": {
+          "in": 1522,
+          "out": 295
+        },
+        "judge": {
+          "in": 1522,
+          "out": 295
+        }
+      },
+      "total_tokens": 6347,
+      "total_seconds": 30.7
+    }
+  },
+  {
+    "id": "t077",
+    "question": "Why do the deployment docs suggest keeping one application process in each container?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Keeping only one application process (e.g., a single Uvicorn process) in each container lets the cluster\u2011level replication and load\u2011balancing handle scaling, so the container itself stays simple and avoids extra complexity from managing multiple workers inside it\u202f[1].\u202fWith one process per container you can run many identical containers, each on its own CPU core or machine, and the load balancer will distribute requests across those containers, giving you parallelisation without needing multiple processes inside a single container\u202f[2].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that one process per container enables independent scaling by the orchestrator and simplifies load balancing, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.75,
+        "writer": 12.39,
+        "judge": 16.97
+      },
+      "tokens": {
+        "writer": {
+          "in": 1692,
+          "out": 260
+        },
+        "judge": {
+          "in": 1692,
+          "out": 260
+        }
+      },
+      "total_tokens": 6308,
+      "total_seconds": 30.11
+    }
+  },
+  {
+    "id": "t078",
+    "question": "Why must a cookie parameter be declared with Cookie metadata?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Because FastAPI needs to know that a parameter should be read from the request\u2019s cookies, you must annotate it with the `Cookie` metadata; otherwise FastAPI would treat the argument as a regular query parameter. Using `Cookie` tells FastAPI to extract the value from the cookies sent by the client.\u202f[3]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states that without Cookie metadata FastAPI treats the parameter as a query parameter and explains the need for Cookie annotation.",
+    "stats": {
+      "seconds": {
+        "search": 0.91,
+        "writer": 11.6,
+        "judge": 18.63
+      },
+      "tokens": {
+        "writer": {
+          "in": 1882,
+          "out": 213
+        },
+        "judge": {
+          "in": 1882,
+          "out": 213
+        }
+      },
+      "total_tokens": 6608,
+      "total_seconds": 31.14
+    }
+  },
+  {
+    "id": "t079",
+    "question": "How can a path operation produce JSON Lines items as they become ready?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "A path operation can be written as an async generator that **yields** each model instance instead of returning a whole list.  \nDeclare the return type as `AsyncIterable[Item]` (or another Pydantic model) and `yield` each item when it is ready. FastAPI will stream the response, sending each yielded object as a separate line of JSON (the \u201cJSON\u202fLines\u201d format, typically with `application/jsonl` content type) so the client can start processing the first line while later items are still being produced[1][3][5].",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student correctly states to use yield (async generator) to stream JSON Lines, matching the reference.",
+    "stats": {
+      "seconds": {
+        "search": 0.88,
+        "writer": 12.17,
+        "judge": 16.14
+      },
+      "tokens": {
+        "writer": {
+          "in": 1608,
+          "out": 290
+        },
+        "judge": {
+          "in": 1608,
+          "out": 290
+        }
+      },
+      "total_tokens": 6324,
+      "total_seconds": 29.19
+    }
+  },
+  {
+    "id": "t080",
+    "question": "How do I set a response header and still return my regular dictionary or model?",
+    "answerable": true,
+    "answered": true,
+    "reason": "answered",
+    "answer": "Declare a `Response` parameter in the path\u2011operation function, set the header on that temporary response, and then return your normal `dict` (or model). FastAPI will copy the header to the final response while still applying any `response_model` to the returned object.\n\n```python\nfrom fastapi import FastAPI, Response\n\napp = FastAPI()\n\n@app.get(\"/headers-and-object/\")\ndef get_headers(response: Response):\n    response.headers[\"X-Cat-Dog\"] = \"alone in the world\"\n    return {\"message\": \"Hello World\"}      # or any Pydantic model\n```\n\nThe header is added via `response.headers[...]`, and the returned dictionary (or model) is processed normally, including any `response_model` filtering.\u202f[2][1]",
+    "level": "high",
+    "confidence": 1.0,
+    "support": 1.0,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "Student repeats the reference solution accurately, describing injecting a Response, setting headers, and returning the normal dict/model without contradiction.",
+    "stats": {
+      "seconds": {
+        "search": 0.79,
+        "writer": 8.97,
+        "judge": 15.17
+      },
+      "tokens": {
+        "writer": {
+          "in": 1342,
+          "out": 305
+        },
+        "judge": {
+          "in": 1342,
+          "out": 305
+        }
+      },
+      "total_tokens": 5624,
+      "total_seconds": 24.93
+    }
+  },
+  {
+    "id": "t081",
+    "question": "How long should I roast a whole chicken at 200\u00b0C?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.41
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.41
+    }
+  },
+  {
+    "id": "t082",
+    "question": "Which Kyoto temples are quietest at sunrise?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.13
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.13
+    }
+  },
+  {
+    "id": "t083",
+    "question": "What is the best way to remove mildew from bathroom grout?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.32
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.32
+    }
+  },
+  {
+    "id": "t084",
+    "question": "Why do monarch butterflies migrate each autumn?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.12
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.12
+    }
+  },
+  {
+    "id": "t085",
+    "question": "Can you suggest an easy piano piece for a beginner?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.08
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.08
+    }
+  },
+  {
+    "id": "t086",
+    "question": "What exercises help loosen tight hips after sitting?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.32
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.32
+    }
+  },
+  {
+    "id": "t087",
+    "question": "How should I store fresh basil for the week?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.07
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.07
+    }
+  },
+  {
+    "id": "t088",
+    "question": "Which constellations are easiest to see in winter?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 0.87
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 0.87
+    }
+  },
+  {
+    "id": "t089",
+    "question": "How is scoring handled in a standard tennis match?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 0.97
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 0.97
+    }
+  },
+  {
+    "id": "t090",
+    "question": "How do I choose a comfortable hiking backpack?",
+    "answerable": false,
+    "answered": false,
+    "reason": "gate: no chunk was relevant enough",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - gate: no chunk was relevant enough",
+    "stats": {
+      "seconds": {
+        "search": 1.38
+      },
+      "tokens": {},
+      "total_tokens": 0,
+      "total_seconds": 1.38
+    }
+  },
+  {
+    "id": "t091",
+    "question": "How do I configure Celery with Redis retries for FastAPI background jobs?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.22,
+        "writer": 0.79
+      },
+      "tokens": {
+        "writer": {
+          "in": 1290,
+          "out": 101
+        },
+        "judge": {
+          "in": 1290,
+          "out": 101
+        }
+      },
+      "total_tokens": 2782,
+      "total_seconds": 2.01
+    }
+  },
+  {
+    "id": "t092",
+    "question": "How can I send FastAPI traces to Sentry with custom release tags?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.1,
+        "writer": 10.58
+      },
+      "tokens": {
+        "writer": {
+          "in": 1964,
+          "out": 56
+        },
+        "judge": {
+          "in": 1964,
+          "out": 56
+        }
+      },
+      "total_tokens": 4040,
+      "total_seconds": 11.68
+    }
+  },
+  {
+    "id": "t093",
+    "question": "How do I run Alembic migrations automatically during FastAPI startup?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.06,
+        "writer": 12.86
+      },
+      "tokens": {
+        "writer": {
+          "in": 1737,
+          "out": 155
+        },
+        "judge": {
+          "in": 1737,
+          "out": 155
+        }
+      },
+      "total_tokens": 3784,
+      "total_seconds": 13.92
+    }
+  },
+  {
+    "id": "t094",
+    "question": "How do I export Prometheus metrics and configure alert rules for a FastAPI service?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.21,
+        "writer": 8.57
+      },
+      "tokens": {
+        "writer": {
+          "in": 1518,
+          "out": 84
+        },
+        "judge": {
+          "in": 1518,
+          "out": 84
+        }
+      },
+      "total_tokens": 3204,
+      "total_seconds": 9.78
+    }
+  },
+  {
+    "id": "t095",
+    "question": "Which pytest-xdist options should I use to parallelize FastAPI tests and isolate fixtures?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.35,
+        "writer": 17.05
+      },
+      "tokens": {
+        "writer": {
+          "in": 2008,
+          "out": 180
+        },
+        "judge": {
+          "in": 2008,
+          "out": 180
+        }
+      },
+      "total_tokens": 4376,
+      "total_seconds": 18.4
+    }
+  },
+  {
+    "id": "t096",
+    "question": "How do I configure Kubernetes liveness and readiness probes for a FastAPI deployment?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.28,
+        "writer": 9.58
+      },
+      "tokens": {
+        "writer": {
+          "in": 1464,
+          "out": 63
+        },
+        "judge": {
+          "in": 1464,
+          "out": 63
+        }
+      },
+      "total_tokens": 3054,
+      "total_seconds": 10.86
+    }
+  },
+  {
+    "id": "t097",
+    "question": "How should I set SQLAlchemy pool_pre_ping and pool_recycle for FastAPI database sessions?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.37,
+        "writer": 15.81
+      },
+      "tokens": {
+        "writer": {
+          "in": 2204,
+          "out": 107
+        },
+        "judge": {
+          "in": 2204,
+          "out": 107
+        }
+      },
+      "total_tokens": 4622,
+      "total_seconds": 17.18
+    }
+  },
+  {
+    "id": "t098",
+    "question": "How can I add per-client Redis rate limiting to FastAPI routes?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 0.85,
+        "writer": 8.75
+      },
+      "tokens": {
+        "writer": {
+          "in": 1362,
+          "out": 118
+        },
+        "judge": {
+          "in": 1362,
+          "out": 118
+        }
+      },
+      "total_tokens": 2960,
+      "total_seconds": 9.6
+    }
+  },
+  {
+    "id": "t099",
+    "question": "How do I implement rotating and revocable JWT refresh tokens in FastAPI?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.36,
+        "writer": 17.82
+      },
+      "tokens": {
+        "writer": {
+          "in": 2081,
+          "out": 67
+        },
+        "judge": {
+          "in": 2081,
+          "out": 67
+        }
+      },
+      "total_tokens": 4296,
+      "total_seconds": 19.18
+    }
+  },
+  {
+    "id": "t100",
+    "question": "How can I consume Kafka messages with FastAPI and commit offsets safely?",
+    "answerable": false,
+    "answered": false,
+    "reason": "writer: the sources don't contain the answer",
+    "answer": "I don't know.",
+    "level": "none",
+    "confidence": 0.0,
+    "support": null,
+    "verdict": "correct",
+    "score": 1.0,
+    "grader_reason": "refused - writer: the sources don't contain the answer",
+    "stats": {
+      "seconds": {
+        "search": 1.36,
+        "writer": 12.15
+      },
+      "tokens": {
+        "writer": {
+          "in": 1766,
+          "out": 146
+        },
+        "judge": {
+          "in": 1766,
+          "out": 146
+        }
+      },
+      "total_tokens": 3824,
+      "total_seconds": 13.51
+    }
+  }
+]
