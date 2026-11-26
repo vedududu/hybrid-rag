@@ -6,6 +6,7 @@ Two ways to run:
 - Direct mode (RAG_DIRECT=1, used on Streamlit Community Cloud): there is no separate API there,
   so the page runs the same pipeline itself.
 """
+import base64
 import hashlib
 import html
 import json
@@ -65,7 +66,10 @@ REASONS = {
 }
 CITATION = re.compile(r"【(\d+)(?:†[^】]*)?】")
 
-st.set_page_config(page_title="Ask the FastAPI docs", page_icon="📘", layout="centered",
+LOGO = Path(__file__).resolve().parent / "logo.png"
+LOGO_URI = "data:image/png;base64," + base64.b64encode(LOGO.read_bytes()).decode()
+
+st.set_page_config(page_title="Ask the FastAPI docs", page_icon=str(LOGO), layout="centered",
                    initial_sidebar_state="expanded")
 
 st.markdown("""
@@ -163,7 +167,8 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
 .errorcard { border:1px solid rgba(255,90,95,.5); border-radius:14px; padding:.7rem 1rem; background:rgba(255,90,95,.07); }
 
 /* ---------- sidebar ---------- */
-.brand { font-family:var(--head); font-weight:700; font-size:1.15rem; color:#F2F4F7; }
+.brand { font-family:var(--head); font-weight:700; font-size:1.15rem; color:#F2F4F7; display:flex; align-items:center; gap:.55rem; }
+.brand img { width:30px; height:30px; filter:drop-shadow(0 0 6px rgba(184,243,74,.45)); }
 .status { font-family:var(--mono); font-size:.72rem; color:var(--muted); margin:.3rem 0 1rem 0; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.4rem; }
 .dot.on { background:var(--lime); box-shadow:0 0 8px var(--lime); } .dot.off { background:#FF5A5F; }
@@ -473,7 +478,7 @@ def render_answer(result, turn):
 
 # ---------- sidebar ----------
 with st.sidebar:
-    st.markdown('<div class="brand">🤖 RAG Assistant</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="brand"><img src="{LOGO_URI}" alt="">RAG Assistant</div>', unsafe_allow_html=True)
     if DIRECT_MODE:
         status = '<span class="dot on"></span>Online · cloud demo mode'
     elif api_is_up():

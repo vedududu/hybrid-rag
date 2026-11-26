@@ -1,8 +1,6 @@
 import json
 import re
 
-from rich import prompt
-
 from src.generation.llm import ask_llm
 from src.generation.prompt import format_sources
 
