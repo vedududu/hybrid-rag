@@ -87,6 +87,15 @@ HIRE_CARD = ('<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d=
             f'<div class="btns"><a class="yes" href="{INTERVIEW_MAILTO}" target="_blank">Yes! 💚</a>'
             '<span class="no"><span class="a">Maybe later</span><span class="b">Sure? 🥺</span></span></div>')
 
+# Phone-only popup, shown once, 3 s after the first answer. Pure HTML/CSS (Streamlit Cloud blocks page scripts):
+# the hidden checkbox remembers "closed"; ✕, "Maybe later" and tapping outside the card all tick it.
+HIRE_POPUP = ('<input type="checkbox" id="hire-close" class="hire-close">'
+              '<div class="hire-pop"><label for="hire-close" class="hire-backdrop"></label>'
+              '<div class="hire pop"><label for="hire-close" class="x" title="Close">✕</label>'
+              + HIRE_CARD.replace('<span class="no">', '<label for="hire-close" class="no">')
+                         .replace('</span></span></div>', '</span></label></div>')
+              + '</div></div>')
+
 
 st.markdown("""
 <style>
@@ -208,7 +217,7 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
         background:linear-gradient(160deg, #12161C, #0B0D10); border:1px solid rgba(184,243,74,.38); border-radius:18px;
         box-shadow:0 0 0 1px rgba(184,243,74,.06), 0 18px 50px rgba(0,0,0,.55), 0 0 36px rgba(184,243,74,.10);
         }
-.hire.side { display:none; }
+.hire.side, .hire.inline { display:none; }
 .hire .heart { width:46px; height:46px; display:block; margin:0 0 .55rem 0;
                filter:drop-shadow(0 0 6px rgba(184,243,74,.9)) drop-shadow(0 0 16px rgba(184,243,74,.45));
                animation:heartbeat 1.25s ease-in-out infinite; transform-origin:center; }
@@ -237,6 +246,20 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
 @media (max-width:1399px) {   /* no room on the right: show the copy at the bottom of the sidebar instead */
   .hire.float { display:none; }
   .hire.side { display:block; position:static; width:auto; margin-top:1rem; } }
+@media (max-width:767px) {    /* phones hide the sidebar, so show the card in the page itself, above the footer */
+  .hire.side { display:none; }
+  .hire.inline { display:block; position:static; width:auto; margin:1.4rem 0 .2rem 0; } }
+/* phone popup: dimmed backdrop + centred card, fading in 3 s after it is drawn */
+.hire-close, .hire-pop { display:none; }
+.hire-pop { position:fixed; inset:0; z-index:1000005; opacity:0; visibility:hidden; animation:hire-pop-in .45s ease 3s forwards; }
+@keyframes hire-pop-in { to { opacity:1; visibility:visible; } }
+.hire-backdrop { position:absolute; inset:0; background:rgba(4,5,7,.72); backdrop-filter:blur(3px); cursor:pointer; }
+.hire.pop { position:absolute; top:50%; left:50%; right:auto; width:min(320px, calc(100vw - 40px));
+            transform:translate(-50%, -50%); }
+.hire .x { position:absolute; top:.5rem; right:.85rem; color:#8B93A1; font-size:1.1rem; cursor:pointer; }
+.hire .x:hover { color:#E8EAED; }
+@media (max-width:767px) { .hire-pop { display:block; } }
+.hire-close:checked + .hire-pop { display:none !important; }
 @media (prefers-reduced-motion:reduce) { .hire .heart { animation:none; } }
 </style>
 """ + f'<div class="hire float">{HIRE_CARD}</div>', unsafe_allow_html=True)
@@ -614,5 +637,10 @@ if question:
     del history[:-MAX_TURNS]
     st.rerun()
 
+popup = ""
+if history and not st.session_state.get("hire_popped"):
+    st.session_state["hire_popped"] = True  # once per visit
+    popup = HIRE_POPUP
+st.markdown(f'<div class="hire inline">{HIRE_CARD}</div>' + popup, unsafe_allow_html=True)  # phones only
 st.markdown(f'<div class="footer">FastAPI docs · ChromaDB · BM25 · MiniLM reranker · gpt-oss-120b on Groq · '
             f'<a href="{GITHUB_URL}" target="_blank">source on GitHub ↗</a></div>', unsafe_allow_html=True)
