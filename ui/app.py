@@ -16,9 +16,11 @@ import sys
 import time
 from datetime import date
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 def load_secrets_into_env():
@@ -38,6 +40,12 @@ DIRECT_MODE = os.getenv("RAG_DIRECT") == "1"
 DAILY_LIMIT = int(os.getenv("DAILY_LIMIT", "150"))  # protects the free Groq allowance on a public demo
 DOCS_SITE = "https://fastapi.tiangolo.com/"
 GITHUB_URL = "https://github.com/vedududu/hybrid-rag"
+# The "ask me out… for an interview" popup (a joke card on the right side of the page)
+CONTACT_EMAIL = "vedant3715@gmail.com"
+POPUP_DELAY_SECONDS = 15  # shown after this long on the page, or right after the first answer
+INTERVIEW_MAILTO = (f"mailto:{CONTACT_EMAIL}?subject=" + quote("Interview invite (via your RAG demo) 💚")
+                    + "&body=" + quote("Hi Vedant,\n\nI tried your RAG demo and would like to talk about a role at "
+                                       "our company.\n\n"))
 MAX_TURNS = 20          # how many questions the chat keeps on screen
 THINKING_SHOWN = 260    # how many characters of the AI's live thinking to show at once
 THINKING_PAUSE = 0.012  # seconds between thinking pieces (Groq sends them almost instantly; this is only for show)
@@ -71,6 +79,50 @@ LOGO_URI = "data:image/png;base64," + base64.b64encode(LOGO.read_bytes()).decode
 
 st.set_page_config(page_title="Ask the FastAPI docs", page_icon=str(LOGO), layout="centered",
                    initial_sidebar_state="expanded")
+
+HIRE_CARD = ('<a class="x" href="#" title="Close">✕</a>'
+            '<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 '
+            '2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 '
+            '3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+            '<div class="q1">Would you like to ask Vedant out…</div>'
+            '<div class="q2">…for an <span>interview?</span></div>'
+            '<div class="small">Builds AI that admits when it doesn&#39;t know. Emotionally available, technically too.</div>'
+            f'<div class="btns"><a class="yes" href="{INTERVIEW_MAILTO}" target="_blank">Yes! 💚</a>'
+            '<a class="no" href="#"><span class="a">Maybe later</span><span class="b">Sure? 🥺</span></a></div>')
+
+
+def interview_popup():
+    """The joke card: "Would you like to ask Vedant out… for an interview?" with a beating neon heart.
+
+    Streamlit redraws the page on every click, which would reset any timer inside the page itself. So a tiny
+    invisible script adds the card straight to the browser page (outside Streamlit's redraws) and keeps the
+    start time in the tab's sessionStorage. The card appears POPUP_DELAY_SECONDS after the visit starts, or
+    straight away once the first answer has been shown. Closing it keeps it closed for the rest of the visit.
+    """
+    if st.session_state.get("history"):
+        st.session_state["hire_ready"] = True  # stays "ready" even if the chat is cleared later
+    ready = "true" if st.session_state.get("hire_ready") else "false"
+    components.html(f"""<script>
+(function () {{
+  const doc = window.parent.document, store = window.parent.sessionStorage;
+  if (store.getItem("hireClosed")) return;
+  if (!store.getItem("hireStart")) store.setItem("hireStart", String(Date.now()));
+  let card = doc.getElementById("hire");
+  if (!card) {{
+    card = doc.createElement("div");
+    card.id = "hire"; card.className = "hire"; card.innerHTML = {json.dumps(HIRE_CARD)};
+    doc.body.appendChild(card);
+    const close = (e) => {{ if (e) e.preventDefault(); card.remove(); store.setItem("hireClosed", "1"); }};
+    card.querySelector(".x").addEventListener("click", close);
+    card.querySelector(".no").addEventListener("click", close);
+    card.querySelector(".yes").addEventListener("click", () => setTimeout(close, 400));
+  }}
+  const waited = Date.now() - Number(store.getItem("hireStart"));
+  const wait = {ready} ? 600 : Math.max(0, {POPUP_DELAY_SECONDS * 1000} - waited);
+  setTimeout(() => card.classList.add("show"), wait);
+}})();
+</script>""", height=0)
+
 
 st.markdown("""
 <style>
@@ -183,6 +235,46 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
 .mini span { font-family:var(--mono); font-size:.62rem; color:var(--muted); }
 .footer { font-family:var(--mono); font-size:.7rem; color:#5E6673; text-align:center; margin:1.2rem 0 .4rem 0; }
 .footer a { color:var(--muted); }
+
+/* ---------- "ask me out… for an interview" popup ---------- */
+/* --gap = the empty strip right of the chat column (sidebar 300px + column 704px); the card sizes itself to fit it */
+.hire { --gap:calc((100vw - 1004px) / 2); --w:clamp(196px, calc(var(--gap) - 24px), 272px);
+        position:fixed; top:30vh; width:var(--w); right:max(10px, calc((var(--gap) - var(--w)) / 2));
+        container-type:inline-size; z-index:1000; padding:1.05rem 1.1rem .95rem 1.1rem;
+        background:linear-gradient(160deg, #12161C, #0B0D10); border:1px solid rgba(184,243,74,.38); border-radius:18px;
+        box-shadow:0 0 0 1px rgba(184,243,74,.06), 0 18px 50px rgba(0,0,0,.55), 0 0 36px rgba(184,243,74,.10);
+        opacity:0; visibility:hidden; transform:translateY(14px) scale(.97); }
+.hire.show { animation:hire-in .55s cubic-bezier(.2,.9,.3,1.2) forwards; }
+@keyframes hire-in { to { opacity:1; visibility:visible; transform:none; } }
+.hire .x { position:absolute; top:.45rem; right:.7rem; color:#5E6673; text-decoration:none; font-size:.95rem; }
+.hire .x:hover { color:#E8EAED; }
+.hire .heart { width:46px; height:46px; display:block; margin:0 0 .55rem 0;
+               filter:drop-shadow(0 0 6px rgba(184,243,74,.9)) drop-shadow(0 0 16px rgba(184,243,74,.45));
+               animation:heartbeat 1.25s ease-in-out infinite; transform-origin:center; }
+.hire .heart path { fill:var(--lime); transition:fill .25s; }
+@keyframes heartbeat { 0%,100% { transform:scale(1); } 14% { transform:scale(1.22); } 28% { transform:scale(1); }
+                       42% { transform:scale(1.14); } 70% { transform:scale(1); } }
+.hire .q1 { font-family:var(--mono); font-size:.74rem; color:var(--muted); letter-spacing:.02em; }
+.hire .q2 { font-family:var(--head); font-weight:700; font-size:1.32rem; line-height:1.15; color:#F2F4F7; margin:.15rem 0 .45rem 0; }
+.hire .q2 span { color:var(--lime); text-shadow:0 0 14px rgba(184,243,74,.45); }
+.hire .small { font-size:.78rem; color:#AEB4BE; line-height:1.4; margin-bottom:.85rem; }
+.hire .btns { display:flex; gap:.5rem; }
+.hire .btns a { flex:1; text-align:center; text-decoration:none !important; border-radius:10px; padding:.48rem .4rem;
+                font-family:var(--mono); font-size:.74rem; font-weight:600; transition:all .2s; }
+.hire .yes { background:var(--lime); color:#07080A !important; box-shadow:0 0 14px rgba(184,243,74,.35); }
+.hire .yes:hover { box-shadow:0 0 22px rgba(184,243,74,.7); transform:translateY(-1px); }
+.hire .no { border:1px solid var(--line); color:#8B93A1 !important; }
+.hire .no .b { display:none; }
+.hire .no:hover { border-color:rgba(255,90,95,.5); color:#FF5A5F !important; }
+.hire .no:hover .a { display:none; } .hire .no:hover .b { display:inline; }
+.hire:has(.yes:hover) .heart { animation-duration:.55s; }                   /* excited */
+.hire:has(.no:hover) .heart { animation:none; transform:scale(.9); filter:none; }  /* heartbroken */
+.hire:has(.no:hover) .heart path { fill:#3A404A; }
+@container (max-width:230px) {   /* narrow card: smaller type, buttons stacked */
+  .hire .heart { width:36px; height:36px; } .hire .q1 { font-size:.68rem; } .hire .q2 { font-size:1.12rem; }
+  .hire .small { font-size:.74rem; } .hire .btns { flex-direction:column; gap:.4rem; } }
+@media (max-width:1399px) { .hire { top:auto; bottom:120px; right:14px; width:min(236px, calc(100vw - 28px)); } }
+@media (prefers-reduced-motion:reduce) { .hire .heart { animation:none; } }
 </style>
 """, unsafe_allow_html=True)
 
@@ -505,6 +597,7 @@ with st.sidebar:
     st.caption("Each question is answered on its own – the assistant doesn't remember earlier questions.")
     st.markdown(f'<div class="footer"><a href="{GITHUB_URL}" target="_blank">GitHub ↗</a></div>',
                 unsafe_allow_html=True)
+    interview_popup()  # invisible; adds the 'interview?' card to the page
 
 
 # ---------- main page ----------
