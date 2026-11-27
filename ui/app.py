@@ -20,7 +20,6 @@ from urllib.parse import quote
 
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
 
 
 def load_secrets_into_env():
@@ -40,9 +39,8 @@ DIRECT_MODE = os.getenv("RAG_DIRECT") == "1"
 DAILY_LIMIT = int(os.getenv("DAILY_LIMIT", "150"))  # protects the free Groq allowance on a public demo
 DOCS_SITE = "https://fastapi.tiangolo.com/"
 GITHUB_URL = "https://github.com/vedududu/hybrid-rag"
-# The "ask me out… for an interview" popup (a joke card on the right side of the page)
+# The "ask me out… for an interview" card (a joke, always on screen: right side, or in the sidebar on small screens)
 CONTACT_EMAIL = "vedant3715@gmail.com"
-POPUP_DELAY_SECONDS = 15  # shown after this long on the page, or right after the first answer
 INTERVIEW_MAILTO = (f"mailto:{CONTACT_EMAIL}?subject=" + quote("Interview invite (via your RAG demo) 💚")
                     + "&body=" + quote("Hi Vedant,\n\nI tried your RAG demo and would like to talk about a role at "
                                        "our company.\n\n"))
@@ -80,48 +78,14 @@ LOGO_URI = "data:image/png;base64," + base64.b64encode(LOGO.read_bytes()).decode
 st.set_page_config(page_title="Ask the FastAPI docs", page_icon=str(LOGO), layout="centered",
                    initial_sidebar_state="expanded")
 
-HIRE_CARD = ('<a class="x" href="#" title="Close">✕</a>'
-            '<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 '
+HIRE_CARD = ('<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 '
             '2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 '
             '3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
             '<div class="q1">Would you like to ask Vedant out…</div>'
             '<div class="q2">…for an <span>interview?</span></div>'
             '<div class="small">Builds AI that admits when it doesn&#39;t know. Emotionally available, technically too.</div>'
             f'<div class="btns"><a class="yes" href="{INTERVIEW_MAILTO}" target="_blank">Yes! 💚</a>'
-            '<a class="no" href="#"><span class="a">Maybe later</span><span class="b">Sure? 🥺</span></a></div>')
-
-
-def interview_popup():
-    """The joke card: "Would you like to ask Vedant out… for an interview?" with a beating neon heart.
-
-    Streamlit redraws the page on every click, which would reset any timer inside the page itself. So a tiny
-    invisible script adds the card straight to the browser page (outside Streamlit's redraws) and keeps the
-    start time in the tab's sessionStorage. The card appears POPUP_DELAY_SECONDS after the visit starts, or
-    straight away once the first answer has been shown. Closing it keeps it closed for the rest of the visit.
-    """
-    if st.session_state.get("history"):
-        st.session_state["hire_ready"] = True  # stays "ready" even if the chat is cleared later
-    ready = "true" if st.session_state.get("hire_ready") else "false"
-    components.html(f"""<script>
-(function () {{
-  const doc = window.parent.document, store = window.parent.sessionStorage;
-  if (store.getItem("hireClosed")) return;
-  if (!store.getItem("hireStart")) store.setItem("hireStart", String(Date.now()));
-  let card = doc.getElementById("hire");
-  if (!card) {{
-    card = doc.createElement("div");
-    card.id = "hire"; card.className = "hire"; card.innerHTML = {json.dumps(HIRE_CARD)};
-    doc.body.appendChild(card);
-    const close = (e) => {{ if (e) e.preventDefault(); card.remove(); store.setItem("hireClosed", "1"); }};
-    card.querySelector(".x").addEventListener("click", close);
-    card.querySelector(".no").addEventListener("click", close);
-    card.querySelector(".yes").addEventListener("click", () => setTimeout(close, 400));
-  }}
-  const waited = Date.now() - Number(store.getItem("hireStart"));
-  const wait = {ready} ? 600 : Math.max(0, {POPUP_DELAY_SECONDS * 1000} - waited);
-  setTimeout(() => card.classList.add("show"), wait);
-}})();
-</script>""", height=0)
+            '<span class="no"><span class="a">Maybe later</span><span class="b">Sure? 🥺</span></span></div>')
 
 
 st.markdown("""
@@ -243,11 +207,8 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
         container-type:inline-size; z-index:1000; padding:1.05rem 1.1rem .95rem 1.1rem;
         background:linear-gradient(160deg, #12161C, #0B0D10); border:1px solid rgba(184,243,74,.38); border-radius:18px;
         box-shadow:0 0 0 1px rgba(184,243,74,.06), 0 18px 50px rgba(0,0,0,.55), 0 0 36px rgba(184,243,74,.10);
-        opacity:0; visibility:hidden; transform:translateY(14px) scale(.97); }
-.hire.show { animation:hire-in .55s cubic-bezier(.2,.9,.3,1.2) forwards; }
-@keyframes hire-in { to { opacity:1; visibility:visible; transform:none; } }
-.hire .x { position:absolute; top:.45rem; right:.7rem; color:#5E6673; text-decoration:none; font-size:.95rem; }
-.hire .x:hover { color:#E8EAED; }
+        }
+.hire.side { display:none; }
 .hire .heart { width:46px; height:46px; display:block; margin:0 0 .55rem 0;
                filter:drop-shadow(0 0 6px rgba(184,243,74,.9)) drop-shadow(0 0 16px rgba(184,243,74,.45));
                animation:heartbeat 1.25s ease-in-out infinite; transform-origin:center; }
@@ -259,7 +220,7 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
 .hire .q2 span { color:var(--lime); text-shadow:0 0 14px rgba(184,243,74,.45); }
 .hire .small { font-size:.78rem; color:#AEB4BE; line-height:1.4; margin-bottom:.85rem; }
 .hire .btns { display:flex; gap:.5rem; }
-.hire .btns a { flex:1; text-align:center; text-decoration:none !important; border-radius:10px; padding:.48rem .4rem;
+.hire .btns > * { flex:1; cursor:pointer; text-align:center; text-decoration:none !important; border-radius:10px; padding:.48rem .4rem;
                 font-family:var(--mono); font-size:.74rem; font-weight:600; transition:all .2s; }
 .hire .yes { background:var(--lime); color:#07080A !important; box-shadow:0 0 14px rgba(184,243,74,.35); }
 .hire .yes:hover { box-shadow:0 0 22px rgba(184,243,74,.7); transform:translateY(-1px); }
@@ -273,10 +234,12 @@ div[data-testid="stButton"] button:hover { border-color:var(--lime); box-shadow:
 @container (max-width:230px) {   /* narrow card: smaller type, buttons stacked */
   .hire .heart { width:36px; height:36px; } .hire .q1 { font-size:.68rem; } .hire .q2 { font-size:1.12rem; }
   .hire .small { font-size:.74rem; } .hire .btns { flex-direction:column; gap:.4rem; } }
-@media (max-width:1399px) { .hire { top:auto; bottom:120px; right:14px; width:min(236px, calc(100vw - 28px)); } }
+@media (max-width:1399px) {   /* no room on the right: show the copy at the bottom of the sidebar instead */
+  .hire.float { display:none; }
+  .hire.side { display:block; position:static; width:auto; margin-top:1rem; } }
 @media (prefers-reduced-motion:reduce) { .hire .heart { animation:none; } }
 </style>
-""", unsafe_allow_html=True)
+""" + f'<div class="hire float">{HIRE_CARD}</div>', unsafe_allow_html=True)
 
 
 # ---------- talking to the API ----------
@@ -597,7 +560,7 @@ with st.sidebar:
     st.caption("Each question is answered on its own – the assistant doesn't remember earlier questions.")
     st.markdown(f'<div class="footer"><a href="{GITHUB_URL}" target="_blank">GitHub ↗</a></div>',
                 unsafe_allow_html=True)
-    interview_popup()  # invisible; adds the 'interview?' card to the page
+    st.markdown(f'<div class="hire side">{HIRE_CARD}</div>', unsafe_allow_html=True)  # small screens only
 
 
 # ---------- main page ----------
